@@ -1,0 +1,6 @@
+@DigitalMenuSystem.API_HostAddress = http://localhost:5124
+
+GET {{DigitalMenuSystem.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
