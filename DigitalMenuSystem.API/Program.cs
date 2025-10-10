@@ -9,6 +9,7 @@ using Amazon;
 using DigitalMenuSystem.API.Data;
 using DigitalMenuSystem.API.Services.Auth;
 using DigitalMenuSystem.API.Services.Menu;
+using DigitalMenuSystem.API.Services.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -107,6 +108,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMenuCategoryService, MenuCategoryService>();
 builder.Services.AddScoped<IMenuItemService, MenuItemService>();
+builder.Services.AddScoped<IS3Service, S3Service>();
 // Add more services here later (IOrderService, etc.)
 
 // Configure CORS for React apps
