@@ -106,7 +106,8 @@ builder.Services.AddAuthorization();
 // Register Services (Dependency Injection)
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMenuCategoryService, MenuCategoryService>();
-// Add more services here later (IMenuItemService, IOrderService, etc.)
+builder.Services.AddScoped<IMenuItemService, MenuItemService>();
+// Add more services here later (IOrderService, etc.)
 
 // Configure CORS for React apps
 builder.Services.AddCors(options =>
