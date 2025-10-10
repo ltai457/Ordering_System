@@ -8,6 +8,7 @@ using Amazon.Runtime;
 using Amazon;
 using DigitalMenuSystem.API.Data;
 using DigitalMenuSystem.API.Services.Auth;
+using DigitalMenuSystem.API.Services.Menu;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -104,7 +105,8 @@ builder.Services.AddAuthorization();
 
 // Register Services (Dependency Injection)
 builder.Services.AddScoped<IAuthService, AuthService>();
-// Add more services here later (IMenuService, IOrderService, etc.)
+builder.Services.AddScoped<IMenuCategoryService, MenuCategoryService>();
+// Add more services here later (IMenuItemService, IOrderService, etc.)
 
 // Configure CORS for React apps
 builder.Services.AddCors(options =>
@@ -126,7 +128,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Disabled for development
 
 // Enable CORS
 app.UseCors("AllowAll");
