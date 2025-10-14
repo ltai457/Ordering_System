@@ -143,19 +143,17 @@ namespace DigitalMenuSystem.API.Services.Menu
         public async Task<bool> DeleteCategoryAsync(int categoryId)
         {
             var category = await _context.MenuCategories.FindAsync(categoryId);
-            
+
             if (category == null)
             {
                 return false;
             }
 
-            // Soft delete - mark as inactive
-            category.IsActive = false;
-            category.UpdatedAt = DateTime.UtcNow;
-
+            // Hard delete - permanently remove from database
+            _context.MenuCategories.Remove(category);
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation($"Deleted (soft) category: {category.Name} (ID: {category.Id})");
+            _logger.LogInformation($"Deleted category: {category.Name} (ID: {category.Id})");
 
             return true;
         }

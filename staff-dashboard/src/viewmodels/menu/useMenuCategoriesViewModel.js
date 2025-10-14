@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import menuCategoryService from '../../services/menuCategoryService.js'
+import imageService from '../../services/imageService.js'
 import {
   categoryFormInitialState,
   mapCategoryToForm,
@@ -24,7 +25,8 @@ const useMenuCategoriesViewModel = () => {
     setError(null)
 
     try {
-      const data = await menuCategoryService.getAll()
+      // Load all categories including inactive ones so we can filter them in the UI
+      const data = await menuCategoryService.getAll(true)
       setCategories(data ?? [])
     } catch (err) {
       setError(err.message ?? 'Unable to load categories')
@@ -66,7 +68,9 @@ const useMenuCategoriesViewModel = () => {
         ? Number(event.target.value ?? 0)
         : field === 'isActive'
           ? event.target.checked
-          : event.target.value
+          : field === 'imageFile'
+            ? event.target.files?.[0] ?? null
+            : event.target.value
 
     setForm((prev) => ({ ...prev, [field]: value }))
 
@@ -89,11 +93,26 @@ const useMenuCategoriesViewModel = () => {
     setIsSubmitting(true)
 
     try {
+      let imageUrl = currentCategory?.imageUrl ?? ''
+
+      // Upload new image if a file was selected
+      if (form.imageFile) {
+        imageUrl = await imageService.uploadCategoryImage(form.imageFile)
+      }
+
+      const payload = {
+        name: form.name,
+        description: form.description,
+        imageUrl,
+        displayOrder: form.displayOrder,
+        isActive: form.isActive,
+      }
+
       if (currentCategory) {
-        await menuCategoryService.update(currentCategory.id, form)
+        await menuCategoryService.update(currentCategory.id, payload)
         setSuccessMessage('Category updated successfully')
       } else {
-        await menuCategoryService.create(form)
+        await menuCategoryService.create(payload)
         setSuccessMessage('Category created successfully')
       }
 

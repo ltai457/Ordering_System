@@ -2,6 +2,7 @@ export const categoryFormInitialState = {
   name: '',
   description: '',
   imageUrl: '',
+  imageFile: null,
   displayOrder: 0,
   isActive: true,
 }
@@ -10,6 +11,7 @@ export const mapCategoryToForm = (category) => ({
   name: category?.name ?? '',
   description: category?.description ?? '',
   imageUrl: category?.imageUrl ?? '',
+  imageFile: null,
   displayOrder: category?.displayOrder ?? 0,
   isActive: category?.isActive ?? true,
 })
@@ -29,6 +31,19 @@ export const validateCategoryForm = (form) => {
 
   if (form.displayOrder < 0) {
     errors.displayOrder = 'Display order must be zero or greater'
+  }
+
+  // Validate image file if provided
+  if (form.imageFile) {
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+    if (!validTypes.includes(form.imageFile.type)) {
+      errors.imageFile = 'Image must be a JPG, PNG, GIF, or WebP file'
+    }
+
+    const maxSize = 5 * 1024 * 1024 // 5MB
+    if (form.imageFile.size > maxSize) {
+      errors.imageFile = 'Image must be smaller than 5MB'
+    }
   }
 
   return errors

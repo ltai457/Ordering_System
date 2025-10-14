@@ -136,7 +136,7 @@ namespace DigitalMenuSystem.API.Controllers
         }
 
         /// <summary>
-        /// Delete a category (soft delete)
+        /// Delete a category permanently
         /// </summary>
         /// <param name="id">Category ID</param>
         /// <returns>Success status</returns>

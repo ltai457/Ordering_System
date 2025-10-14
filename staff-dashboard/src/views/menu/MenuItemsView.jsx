@@ -1,8 +1,9 @@
 import clsx from 'clsx'
-import useMenuCategoriesViewModel from '../../viewmodels/menu/useMenuCategoriesViewModel.js'
+import useMenuItemsViewModel from '../../viewmodels/menu/useMenuItemsViewModel.js'
 
-const MenuCategoriesView = () => {
+const MenuItemsView = () => {
   const {
+    items,
     categories,
     isLoading,
     error,
@@ -11,26 +12,28 @@ const MenuCategoriesView = () => {
     form,
     formErrors,
     isSubmitting,
-    currentCategory,
+    currentItem,
+    categoryFilter,
+    setCategoryFilter,
+    searchTerm,
+    setSearchTerm,
     openCreateForm,
     openEditForm,
     closeForm,
     handleFormChange,
     handleSubmit,
     handleDelete,
-    handleToggleVisibility,
-    statusFilter,
-    setStatusFilter,
+    handleToggleAvailability,
     reload,
-  } = useMenuCategoriesViewModel()
+  } = useMenuItemsViewModel()
 
   return (
     <div className="space-y-6">
       <header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h2 className="text-xl font-semibold text-white">Menu Categories</h2>
+          <h2 className="text-xl font-semibold text-white">Menu Items</h2>
           <p className="text-sm text-slate-400">
-            Organize your menu into sections and control their display order.
+            Manage individual dishes, drinks, and other items on your menu.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -46,7 +49,7 @@ const MenuCategoriesView = () => {
             onClick={openCreateForm}
             type="button"
           >
-            New Category
+            New Item
           </button>
         </div>
       </header>
@@ -64,54 +67,55 @@ const MenuCategoriesView = () => {
       ) : null}
 
       <section className="space-y-4">
-        <div className="flex flex-wrap items-center gap-3">
-          {[
-            { key: 'all', label: 'All' },
-            { key: 'visible', label: 'Visible to customers' },
-            { key: 'hidden', label: 'Hidden' },
-          ].map(({ key, label }) => (
-            <button
-              className={clsx(
-                'rounded-full px-4 py-2 text-sm font-medium transition',
-                statusFilter === key
-                  ? 'bg-primary text-white'
-                  : 'border border-white/10 text-slate-300 hover:border-white/20 hover:bg-white/5',
-              )}
-              key={key}
-              onClick={() => setStatusFilter(key)}
-              type="button"
-            >
-              {label}
-            </button>
-          ))}
+        {/* Filters */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="flex-1">
+            <input
+              className="w-full rounded-lg border border-white/10 bg-surface px-4 py-2 text-sm text-white placeholder:text-slate-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search items by name, description, or category..."
+              type="text"
+              value={searchTerm}
+            />
+          </div>
+          <select
+            className="rounded-lg border border-white/10 bg-surface px-4 py-2 text-sm text-white focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            value={categoryFilter}
+          >
+            <option value="all">All Categories</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
         </div>
 
         {isLoading ? (
           <div className="rounded-2xl border border-white/10 bg-sidebar/60 px-6 py-10 text-center text-sm text-slate-400">
-            Loading categories...
+            Loading menu items...
           </div>
-        ) : categories.length === 0 ? (
+        ) : items.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-white/20 bg-sidebar/40 px-6 py-10 text-center text-sm text-slate-400">
-            {statusFilter === 'hidden'
-              ? 'No hidden categories.'
-              : statusFilter === 'visible'
-                ? 'No visible categories yet.'
-                : 'No categories yet. Click “New Category” to create the first one.'}
+            {searchTerm || categoryFilter !== 'all'
+              ? 'No items match your filters.'
+              : 'No menu items yet. Click "New Item" to create the first one.'}
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {categories.map((category) => (
+            {items.map((item) => (
               <article
                 className="flex h-full flex-col rounded-2xl border border-white/10 bg-sidebar/70 shadow-lg transition hover:border-primary/40 hover:shadow-primary/10 overflow-hidden"
-                key={category.id}
+                key={item.id}
               >
                 <div className="flex flex-col h-full">
                   {/* Image container with aspect ratio */}
-                  {category.imageUrl ? (
+                  {item.imageUrl ? (
                     <div className="w-full aspect-[16/10] bg-surface/50 overflow-hidden">
                       <img
-                        src={category.imageUrl}
-                        alt={category.name}
+                        src={item.imageUrl}
+                        alt={item.name}
                         className="w-full h-full object-cover"
                         loading="lazy"
                       />
@@ -139,39 +143,58 @@ const MenuCategoriesView = () => {
                   <div className="flex flex-col flex-1 p-4 sm:p-5">
                     <div className="flex-1 space-y-3">
                       <div className="flex items-start justify-between gap-2">
-                        <h3 className="text-base sm:text-lg font-semibold text-white line-clamp-2">{category.name}</h3>
+                        <h3 className="text-base sm:text-lg font-semibold text-white line-clamp-2">{item.name}</h3>
                         <span
                           className={clsx(
                             'inline-flex items-center rounded-full px-2 sm:px-3 py-1 text-xs font-semibold whitespace-nowrap flex-shrink-0',
-                            category.isActive
+                            item.isAvailable
                               ? 'bg-emerald-500/10 text-emerald-200'
                               : 'bg-slate-600/20 text-slate-400',
                           )}
                         >
-                          {category.isActive ? 'Visible' : 'Hidden'}
+                          {item.isAvailable ? 'Available' : 'Unavailable'}
                         </span>
                       </div>
+
+                      <div className="flex items-center justify-between">
+                        <span className="text-xl font-bold text-primary">
+                          ${item.price.toFixed(2)}
+                        </span>
+                        <span className="text-xs text-slate-400 bg-white/5 px-2 py-1 rounded">
+                          {item.categoryName}
+                        </span>
+                      </div>
+
                       <p className="text-xs sm:text-sm text-slate-300 line-clamp-2">
-                        {category.description || 'No description provided.'}
+                        {item.description || 'No description provided.'}
                       </p>
 
-                      <dl className="grid grid-cols-2 gap-3 text-xs text-slate-400">
-                        {/* <div>
-                          <dt className="font-semibold text-slate-300">Display order</dt>
-                          <dd>{category.displayOrder}</dd>
-                        </div> */}
-                        <div>
-                          <dt className="font-semibold text-slate-300">Visibility</dt>
-                          <dd>{category.isActive ? 'Shown to guests' : 'Staff only'}</dd>
+                      {item.dietaryInfo ? (
+                        <div className="flex items-center gap-1">
+                          <svg
+                            className="h-4 w-4 text-slate-400"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                          <span className="text-xs text-slate-400">{item.dietaryInfo}</span>
                         </div>
-                      </dl>
+                      ) : null}
                     </div>
 
                     {/* Action buttons */}
                     <div className="mt-4 flex flex-col gap-2">
                       <button
                         className="flex items-center justify-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-primary/40 hover:bg-primary/10"
-                        onClick={() => handleToggleVisibility(category)}
+                        onClick={() => handleToggleAvailability(item)}
                         type="button"
                       >
                         <svg
@@ -183,30 +206,32 @@ const MenuCategoriesView = () => {
                           xmlns="http://www.w3.org/2000/svg"
                         >
                           <path
-                            d="M15 12h6m-3-3v6M4 6h7a4 4 0 0 1 4 4v9"
+                            d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"
                             strokeLinecap="round"
                             strokeLinejoin="round"
                           />
                           <path
-                            d="M4 18h7"
+                            d="M6 6h.008v.008H6V6z"
                             strokeLinecap="round"
                             strokeLinejoin="round"
                           />
                         </svg>
-                        <span className="truncate">{category.isActive ? 'Hide from customers' : 'Show to customers'}</span>
+                        <span className="truncate">
+                          {item.isAvailable ? 'Mark Unavailable' : 'Mark Available'}
+                        </span>
                       </button>
 
                       <div className="flex gap-2">
                         <button
                           className="flex-1 rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-white/20 hover:bg-white/5"
-                          onClick={() => openEditForm(category)}
+                          onClick={() => openEditForm(item)}
                           type="button"
                         >
                           Edit
                         </button>
                         <button
                           className="flex-1 rounded-lg border border-red-500/30 px-3 py-2 text-xs font-semibold text-red-200 transition hover:border-red-500/60 hover:bg-red-500/10"
-                          onClick={() => handleDelete(category)}
+                          onClick={() => handleDelete(item)}
                           type="button"
                         >
                           Delete
@@ -222,12 +247,12 @@ const MenuCategoriesView = () => {
       </section>
 
       {isFormOpen ? (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur">
-          <div className="w-full max-w-xl rounded-2xl border border-white/10 bg-sidebar/90 p-6 shadow-2xl">
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur p-4">
+          <div className="w-full max-w-2xl rounded-2xl border border-white/10 bg-sidebar/90 p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="text-lg font-semibold text-white">
-                  {currentCategory ? 'Edit Category' : 'Create Category'}
+                  {currentItem ? 'Edit Menu Item' : 'Create Menu Item'}
                 </h3>
                 <p className="text-xs text-slate-400">
                   Provide the details that appear in the digital menu.
@@ -254,16 +279,39 @@ const MenuCategoriesView = () => {
 
             <form className="mt-6 space-y-4" onSubmit={handleSubmit} noValidate>
               <div>
-                <label className="block text-sm font-medium text-slate-300" htmlFor="category-name">
-                  Name
+                <label className="block text-sm font-medium text-slate-300" htmlFor="item-category">
+                  Category *
+                </label>
+                <select
+                  className="mt-1 w-full rounded-lg border border-white/10 bg-surface px-3 py-2 text-sm text-white focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  id="item-category"
+                  name="categoryId"
+                  onChange={handleFormChange('categoryId')}
+                  value={form.categoryId}
+                >
+                  <option value="">Select a category</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+                {formErrors.categoryId ? (
+                  <p className="mt-1 text-xs text-red-300">{formErrors.categoryId}</p>
+                ) : null}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300" htmlFor="item-name">
+                  Name *
                 </label>
                 <input
                   autoFocus
                   className="mt-1 w-full rounded-lg border border-white/10 bg-surface px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                  id="category-name"
+                  id="item-name"
                   name="name"
                   onChange={handleFormChange('name')}
-                  placeholder="e.g. Appetizers"
+                  placeholder="e.g. Grilled Salmon"
                   type="text"
                   value={form.name}
                 />
@@ -275,13 +323,13 @@ const MenuCategoriesView = () => {
               <div>
                 <label
                   className="block text-sm font-medium text-slate-300"
-                  htmlFor="category-description"
+                  htmlFor="item-description"
                 >
                   Description
                 </label>
                 <textarea
                   className="mt-1 h-24 w-full rounded-lg border border-white/10 bg-surface px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                  id="category-description"
+                  id="item-description"
                   name="description"
                   onChange={handleFormChange('description')}
                   placeholder="Brief description shown to guests"
@@ -292,57 +340,62 @@ const MenuCategoriesView = () => {
                 ) : null}
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
-                {/* <div>
-                  <label
-                    className="block text-sm font-medium text-slate-300"
-                    htmlFor="category-display-order"
-                  >
-                    Display Order
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="block text-sm font-medium text-slate-300" htmlFor="item-price">
+                    Price *
                   </label>
-                  <input
-                    className="mt-1 w-full rounded-lg border border-white/10 bg-surface px-3 py-2 text-sm text-white focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    id="category-display-order"
-                    min={0}
-                    name="displayOrder"
-                    onChange={handleFormChange('displayOrder')}
-                    type="number"
-                    value={form.displayOrder}
-                  />
-                  {formErrors.displayOrder ? (
-                    <p className="mt-1 text-xs text-red-300">{formErrors.displayOrder}</p>
+                  <div className="relative mt-1">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">$</span>
+                    <input
+                      className="w-full rounded-lg border border-white/10 bg-surface pl-8 pr-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                      id="item-price"
+                      name="price"
+                      onChange={handleFormChange('price')}
+                      placeholder="0.00"
+                      step="0.01"
+                      type="number"
+                      value={form.price}
+                    />
+                  </div>
+                  {formErrors.price ? (
+                    <p className="mt-1 text-xs text-red-300">{formErrors.price}</p>
                   ) : null}
-                </div> */}
+                </div>
 
-                <div className="flex items-center gap-3">
-                  <input
-                    checked={form.isActive}
-                    className="h-4 w-4 rounded border-white/20 bg-surface text-primary focus:ring-primary/40"
-                    id="category-is-active"
-                    name="isActive"
-                    onChange={handleFormChange('isActive')}
-                    type="checkbox"
-                  />
-                  <label className="text-sm text-slate-300" htmlFor="category-is-active">
-                    Visible to customers
+                <div>
+                  <label className="block text-sm font-medium text-slate-300" htmlFor="item-dietary">
+                    Dietary Info
                   </label>
+                  <input
+                    className="mt-1 w-full rounded-lg border border-white/10 bg-surface px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    id="item-dietary"
+                    name="dietaryInfo"
+                    onChange={handleFormChange('dietaryInfo')}
+                    placeholder="e.g. Gluten-free, Vegan"
+                    type="text"
+                    value={form.dietaryInfo}
+                  />
+                  {formErrors.dietaryInfo ? (
+                    <p className="mt-1 text-xs text-red-300">{formErrors.dietaryInfo}</p>
+                  ) : null}
                 </div>
               </div>
 
               <div>
                 <label
                   className="block text-sm font-medium text-slate-300"
-                  htmlFor="category-image"
+                  htmlFor="item-image"
                 >
-                  Category Image
+                  Item Image
                 </label>
                 <div className="mt-2 space-y-3">
                   {/* Show current image if editing and has image */}
-                  {currentCategory?.imageUrl && !form.imageFile ? (
+                  {currentItem?.imageUrl && !form.imageFile ? (
                     <div className="relative">
                       <img
-                        src={currentCategory.imageUrl}
-                        alt="Current category"
+                        src={currentItem.imageUrl}
+                        alt="Current item"
                         className="h-32 w-full rounded-lg object-cover border border-white/10"
                       />
                       <p className="mt-1 text-xs text-slate-400">Current image</p>
@@ -364,7 +417,7 @@ const MenuCategoriesView = () => {
                   <input
                     accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
                     className="block w-full text-sm text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 file:cursor-pointer border border-white/10 rounded-lg bg-surface focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    id="category-image"
+                    id="item-image"
                     name="imageFile"
                     onChange={handleFormChange('imageFile')}
                     type="file"
@@ -378,7 +431,7 @@ const MenuCategoriesView = () => {
                 </div>
               </div>
 
-              <div className="flex justify-end gap-3 pt-4">
+              <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
                 <button
                   className="rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-white/20 hover:bg-white/5"
                   onClick={closeForm}
@@ -393,9 +446,9 @@ const MenuCategoriesView = () => {
                 >
                   {isSubmitting
                     ? 'Saving...'
-                    : currentCategory
-                      ? 'Update Category'
-                      : 'Create Category'}
+                    : currentItem
+                      ? 'Update Item'
+                      : 'Create Item'}
                 </button>
               </div>
             </form>
@@ -406,4 +459,4 @@ const MenuCategoriesView = () => {
   )
 }
 
-export default MenuCategoriesView
+export default MenuItemsView

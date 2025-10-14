@@ -9,9 +9,9 @@ const getRestaurantId = () => {
   return user.restaurantId
 }
 
-const getAll = async () => {
+const getAll = async (includeInactive = false) => {
   const restaurantId = getRestaurantId()
-  const params = new URLSearchParams({ includeInactive: 'true' })
+  const params = new URLSearchParams({ includeInactive: includeInactive.toString() })
   return apiClient.get(
     `/api/MenuCategory/restaurant/${restaurantId}?${params.toString()}`,
   )

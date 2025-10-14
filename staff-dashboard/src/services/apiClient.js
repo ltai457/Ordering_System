@@ -56,6 +56,29 @@ const request = async (endpoint, options = {}) => {
   return handleResponse(response)
 }
 
+const postFormData = async (endpoint, formData, options = {}) => {
+  const { auth = true, signal, ...rest } = options
+
+  const headers = new Headers()
+  if (auth) {
+    const token = localStorage.getItem('dms.auth.token')
+    if (token) {
+      headers.set('Authorization', `Bearer ${token}`)
+    }
+  }
+  // Do NOT set Content-Type for FormData - browser will set it with boundary
+
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    method: 'POST',
+    body: formData,
+    headers,
+    signal,
+    ...rest,
+  })
+
+  return handleResponse(response)
+}
+
 const apiClient = {
   get: (endpoint, options) => request(endpoint, { ...options, method: 'GET' }),
   post: (endpoint, body, options) =>
@@ -66,6 +89,7 @@ const apiClient = {
     request(endpoint, { ...options, method: 'PATCH', body }),
   delete: (endpoint, options) =>
     request(endpoint, { ...options, method: 'DELETE' }),
+  postFormData,
 }
 
 export default apiClient

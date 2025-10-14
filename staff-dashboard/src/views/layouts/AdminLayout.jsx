@@ -23,7 +23,8 @@ const AdminLayout = () => {
 
   const navigationItems = [
     { to: '/dashboard', label: 'Overview', icon: DashboardIcon },
-    { to: '/menu', label: 'Menu Manager', icon: MenuIcon },
+    { to: '/menu/categories', label: 'Menu Categories', icon: MenuIcon },
+    { to: '/menu/items', label: 'Menu Items', icon: ItemsIcon },
     { to: '/orders', label: 'Orders', icon: OrdersIcon },
     { to: '/tables', label: 'Tables', icon: TablesIcon },
   ]
@@ -144,9 +145,20 @@ const MenuIcon = (props) => (
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
-    <path d="M4.5 6.75h15" />
-    <path d="M4.5 12h15" />
-    <path d="M4.5 17.25h15" />
+    <path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+
+const ItemsIcon = (props) => (
+  <svg
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path d="M12 8.25v-1.5m0 1.5c-1.355 0-2.697.056-4.024.166C6.845 8.51 6 9.473 6 10.608v2.513m6-4.871c1.355 0 2.697.056 4.024.166C17.155 8.51 18 9.473 18 10.608v2.513M15 8.25v-1.5m-6 1.5v-1.5m12 9.75-1.5.75a3.354 3.354 0 0 1-3 0 3.354 3.354 0 0 0-3 0 3.354 3.354 0 0 1-3 0 3.354 3.354 0 0 0-3 0 3.354 3.354 0 0 1-3 0L3 15.75m18 0v-2.513m0 2.513v.375c0 .621-.504 1.125-1.125 1.125h-15.75A1.125 1.125 0 0 1 3 16.125V15.75m18-2.513v-2.013a2.25 2.25 0 0 0-1.5-2.122l-1.5-.5m-15 4.635v2.513m0-2.513V11.25a2.25 2.25 0 0 1 1.5-2.122l1.5-.5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 )
 
