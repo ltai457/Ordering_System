@@ -10,6 +10,9 @@ using DigitalMenuSystem.API.Data;
 using DigitalMenuSystem.API.Services.Auth;
 using DigitalMenuSystem.API.Services.Menu;
 using DigitalMenuSystem.API.Services.Storage;
+using DigitalMenuSystem.API.Services.Order;
+using DigitalMenuSystem.API.Services.Table;
+using DigitalMenuSystem.API.Services.Restaurant;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -109,7 +112,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMenuCategoryService, MenuCategoryService>();
 builder.Services.AddScoped<IMenuItemService, MenuItemService>();
 builder.Services.AddScoped<IS3Service, S3Service>();
-// Add more services here later (IOrderService, etc.)
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<ITableService, TableService>();
+builder.Services.AddScoped<IRestaurantService, RestaurantService>();
 
 // Configure CORS for React apps
 builder.Services.AddCors(options =>
