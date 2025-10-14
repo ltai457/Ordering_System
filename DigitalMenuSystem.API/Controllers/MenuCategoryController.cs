@@ -27,11 +27,11 @@ namespace DigitalMenuSystem.API.Controllers
         /// <returns>List of menu categories</returns>
         [HttpGet("restaurant/{restaurantId}")]
         [AllowAnonymous] // Customers can view menu
-        public async Task<IActionResult> GetCategoriesByRestaurant(int restaurantId)
+        public async Task<IActionResult> GetCategoriesByRestaurant(int restaurantId, [FromQuery] bool includeInactive = false)
         {
             try
             {
-                var categories = await _categoryService.GetCategoriesByRestaurantAsync(restaurantId);
+                var categories = await _categoryService.GetCategoriesByRestaurantAsync(restaurantId, includeInactive);
                 return Ok(categories);
             }
             catch (Exception ex)

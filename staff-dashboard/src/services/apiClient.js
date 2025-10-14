@@ -1,0 +1,71 @@
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:5000'
+
+const buildHeaders = (headers, includeAuth) => {
+  const baseHeaders = new Headers(headers ?? {})
+
+  if (!baseHeaders.has('Content-Type')) {
+    baseHeaders.set('Content-Type', 'application/json')
+  }
+
+  if (includeAuth) {
+    const token = localStorage.getItem('dms.auth.token')
+    if (token) {
+      baseHeaders.set('Authorization', `Bearer ${token}`)
+    }
+  }
+
+  return baseHeaders
+}
+
+const handleResponse = async (response) => {
+  const isJson = response.headers
+    .get('Content-Type')
+    ?.includes('application/json')
+
+  const payload = isJson ? await response.json() : null
+
+  if (!response.ok) {
+    const error = new Error(payload?.message ?? 'Request failed')
+    error.status = response.status
+    error.details = payload
+    throw error
+  }
+
+  return payload
+}
+
+const request = async (endpoint, options = {}) => {
+  const {
+    method = 'GET',
+    body,
+    headers,
+    auth = true,
+    signal,
+    ...rest
+  } = options
+
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    method,
+    body: body ? JSON.stringify(body) : undefined,
+    headers: buildHeaders(headers, auth),
+    signal,
+    ...rest,
+  })
+
+  return handleResponse(response)
+}
+
+const apiClient = {
+  get: (endpoint, options) => request(endpoint, { ...options, method: 'GET' }),
+  post: (endpoint, body, options) =>
+    request(endpoint, { ...options, method: 'POST', body }),
+  put: (endpoint, body, options) =>
+    request(endpoint, { ...options, method: 'PUT', body }),
+  patch: (endpoint, body, options) =>
+    request(endpoint, { ...options, method: 'PATCH', body }),
+  delete: (endpoint, options) =>
+    request(endpoint, { ...options, method: 'DELETE' }),
+}
+
+export default apiClient

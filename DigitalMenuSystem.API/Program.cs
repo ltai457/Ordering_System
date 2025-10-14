@@ -16,6 +16,15 @@ using DigitalMenuSystem.API.Services.Restaurant;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure server URLs using environment override or default fallback
+var apiPort = Environment.GetEnvironmentVariable("DMS_API_PORT")?.Trim();
+if (string.IsNullOrEmpty(apiPort) || !int.TryParse(apiPort, out var parsedPort))
+{
+    parsedPort = 5100;
+}
+
+builder.WebHost.UseUrls($"http://0.0.0.0:{parsedPort}", $"http://localhost:{parsedPort}");
+
 // Load environment variables from .env file
 Env.Load();
 

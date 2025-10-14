@@ -18,10 +18,10 @@ namespace DigitalMenuSystem.API.Services.Menu
             _logger = logger;
         }
 
-        public async Task<List<MenuCategoryDto>> GetCategoriesByRestaurantAsync(int restaurantId)
+        public async Task<List<MenuCategoryDto>> GetCategoriesByRestaurantAsync(int restaurantId, bool includeInactive = false)
         {
             var categories = await _context.MenuCategories
-                .Where(c => c.RestaurantId == restaurantId && c.IsActive)
+                .Where(c => c.RestaurantId == restaurantId && (includeInactive || c.IsActive))
                 .OrderBy(c => c.DisplayOrder)
                 .Select(c => new MenuCategoryDto
                 {

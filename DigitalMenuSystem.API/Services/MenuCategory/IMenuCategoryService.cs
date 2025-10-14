@@ -7,7 +7,7 @@ namespace DigitalMenuSystem.API.Services.Menu
         /// <summary>
         /// Get all categories for a restaurant
         /// </summary>
-        Task<List<MenuCategoryDto>> GetCategoriesByRestaurantAsync(int restaurantId);
+        Task<List<MenuCategoryDto>> GetCategoriesByRestaurantAsync(int restaurantId, bool includeInactive = false);
         
         /// <summary>
         /// Get a specific category by ID
