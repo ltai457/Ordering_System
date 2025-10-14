@@ -1,9 +1,14 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-primary: oklch(0.62 0.19 274);
+  --color-primary-foreground: oklch(0.98 0.01 265);
+  --color-surface: oklch(0.2 0.03 246);
+  --color-sidebar: oklch(0.15 0.03 246);
+}
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
     sans-serif;
   line-height: 1.5;

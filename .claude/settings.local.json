@@ -3,7 +3,10 @@
     "allow": [
       "Bash(dotnet build)",
       "Bash(dotnet run:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(npm run dev)",
+      "Bash(npm install:*)",
+      "Bash(pkill:*)"
     ],
     "deny": [],
     "ask": []
