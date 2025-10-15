@@ -6,7 +6,9 @@
       "Bash(curl:*)",
       "Bash(npm run dev)",
       "Bash(npm install:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Read(//Users/lk333/Downloads/ChanganBBQ-main/src/**)",
+      "Bash(rm:*)"
     ],
     "deny": [],
     "ask": []
