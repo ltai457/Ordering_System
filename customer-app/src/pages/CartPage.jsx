@@ -43,11 +43,45 @@ const CartPage = () => {
       const payload = {
         tableId: tableInfo.id,
         notes: orderNotes.trim() || null,
-        orderItems: cartItems.map((item) => ({
-          menuItemId: item.id,
-          quantity: item.quantity,
-          specialInstructions: item.specialInstructions ?? null,
-        })),
+        orderItems: cartItems.map((item) => {
+          // Build special instructions from customization
+          let specialInstructions = null
+
+          if (item.customization) {
+            const parts = []
+
+            // Add spice level
+            if (item.customization.spiceLevel && item.customization.spiceLevel !== 'none') {
+              parts.push(`Spice: ${item.customization.spiceLevel.replace('-', ' ')}`)
+            }
+
+            // Add side dishes
+            if (item.customization.sides && item.customization.sides.length > 0) {
+              parts.push(`Sides: ${item.customization.sides.join(', ')}`)
+            }
+
+            // Add paid add-ons
+            if (item.customization.addOns && item.customization.addOns.length > 0) {
+              const addOnsList = item.customization.addOns.map(
+                addOn => `${addOn.name} (${addOn.quantity}x)`
+              ).join(', ')
+              parts.push(`Extras: ${addOnsList}`)
+            }
+
+            // Add custom instructions
+            if (item.customization.specialInstructions) {
+              parts.push(item.customization.specialInstructions)
+            }
+
+            specialInstructions = parts.length > 0 ? parts.join(' | ') : null
+          }
+
+          return {
+            menuItemId: item.id,
+            quantity: item.quantity,
+            specialInstructions,
+          }
+        }),
       }
 
       const order = await orderService.createOrder(payload)
@@ -219,93 +253,179 @@ const CartPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
-            {cartItems.map((item) => (
-              <div
-                key={item.id}
-                className="bg-white rounded-lg shadow-md p-4 flex gap-4"
-              >
-                {/* Item Image */}
-                <div className="w-24 h-24 flex-shrink-0 bg-gray-200 rounded-lg overflow-hidden">
-                  {item.imageUrl ? (
-                    <img
-                      src={item.imageUrl}
-                      alt={item.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400">
-                      <svg
-                        className="w-8 h-8"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
+            {cartItems.map((item) => {
+              const itemId = item.cartItemId || `${item.id}-default`
+              // Debug logging
+              return (
+                <div
+                  key={itemId}
+                  className="bg-white rounded-lg shadow-md p-4"
+                >
+                  <div className="flex gap-4">
+                    {/* Item Image */}
+                    <div className="w-24 h-24 flex-shrink-0 bg-gray-200 rounded-lg overflow-hidden">
+                      {item.imageUrl ? (
+                        <img
+                          src={item.imageUrl}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
                         />
-                      </svg>
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400">
+                          <svg
+                            className="w-8 h-8"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
 
-                {/* Item Details */}
-                <div className="flex-1">
-                  <h3 className="font-bold text-lg text-gray-900 mb-1">
-                    {item.name}
-                  </h3>
-                  <p className="text-orange-500 font-bold text-lg">
-                    ${item.price.toFixed(2)}
-                  </p>
-                </div>
+                    {/* Item Details */}
+                    <div className="flex-1">
+                      <h3 className="font-bold text-lg text-gray-900 mb-1">
+                        {item.name}
+                      </h3>
+                      <p className="text-orange-500 font-bold text-lg mb-2">
+                        ${item.price.toFixed(2)}
+                      </p>
 
-                {/* Quantity Controls */}
-                <div className="flex flex-col items-end justify-between">
-                  <button
-                    onClick={() => removeFromCart(item.id)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </button>
+                      {/* Customization Details */}
+                      {item.customization && (
+                        <div className="space-y-1.5 text-sm">
+                          {/* Spice Level */}
+                          {item.customization.spiceLevel && item.customization.spiceLevel !== 'none' && (
+                            <div className="flex items-center gap-2">
+                              <span className="text-gray-500">Spice:</span>
+                              <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700 capitalize">
+                                {item.customization.spiceLevel.replace('-', ' ')}
+                              </span>
+                            </div>
+                          )}
 
-                  <div className="flex items-center gap-3 bg-gray-100 rounded-lg px-2 py-1">
-                    <button
-                      onClick={() => decreaseQuantity(item.id)}
-                      className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-900 font-bold"
-                    >
-                      -
-                    </button>
-                    <span className="font-bold text-gray-900 w-8 text-center">
-                      {item.quantity}
-                    </span>
-                    <button
-                      onClick={() => increaseQuantity(item.id)}
-                      className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-900 font-bold"
-                    >
-                      +
-                    </button>
+                          {/* Side Dishes */}
+                          {item.customization.sides && item.customization.sides.length > 0 && (
+                            <div className="flex items-start gap-2">
+                              <span className="text-gray-500 whitespace-nowrap">Sides:</span>
+                              <div className="flex flex-wrap gap-1">
+                                {item.customization.sides.map((side) => (
+                                  <span
+                                    key={side}
+                                    className="inline-flex items-center rounded-full bg-orange-50 px-2 py-0.5 text-xs font-medium text-orange-700"
+                                  >
+                                    {side}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Paid Add-ons */}
+                          {item.customization.addOns && item.customization.addOns.length > 0 && (
+                            <div className="flex items-start gap-2">
+                              <span className="text-gray-500 whitespace-nowrap">Extras:</span>
+                              <div className="flex flex-col gap-1">
+                                {item.customization.addOns.map((addOn) => {
+                                  const price =
+                                    typeof addOn.price === 'number'
+                                      ? addOn.price
+                                      : Number.parseFloat(addOn.price ?? '0')
+                                  return (
+                                    <div key={addOn.name} className="flex items-center gap-2">
+                                      <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">
+                                        {addOn.name} ({addOn.quantity}x)
+                                      </span>
+                                      <span className="text-xs font-semibold text-green-600">
+                                        +${(price * addOn.quantity).toFixed(2)}
+                                      </span>
+                                    </div>
+                                  )
+                                })}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Special Instructions */}
+                          {item.customization.specialInstructions && (
+                            <div className="flex items-start gap-2 mt-2">
+                              <span className="text-gray-500 whitespace-nowrap">Note:</span>
+                              <p className="text-gray-700 italic text-xs bg-gray-50 rounded px-2 py-1">
+                                "{item.customization.specialInstructions}"
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Quantity Controls */}
+                    <div className="flex flex-col items-end justify-between">
+                      <button
+                        onClick={() => removeFromCart(itemId)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+
+                      <div className="flex items-center gap-3 bg-gray-100 rounded-lg px-2 py-1">
+                        <button
+                          onClick={() => decreaseQuantity(itemId)}
+                          className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-900 font-bold"
+                        >
+                          -
+                        </button>
+                        <span className="font-bold text-gray-900 w-8 text-center">
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() => increaseQuantity(itemId)}
+                          className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-900 font-bold"
+                        >
+                          +
+                        </button>
+                      </div>
+
+                      <p className="font-bold text-gray-900">
+                        ${(() => {
+                          let total = item.price * item.quantity
+                          if (item.customization?.addOns) {
+                            const addOnsTotal = item.customization.addOns.reduce((sum, addOn) => {
+                              const price =
+                                typeof addOn.price === 'number'
+                                  ? addOn.price
+                                  : Number.parseFloat(addOn.price ?? '0')
+                              return sum + price * addOn.quantity
+                            }, 0)
+                            total += addOnsTotal * item.quantity
+                          }
+                          return total.toFixed(2)
+                        })()}
+                      </p>
+                    </div>
                   </div>
-
-                  <p className="font-bold text-gray-900">
-                    ${(item.price * item.quantity).toFixed(2)}
-                  </p>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
 
           {/* Order Summary */}

@@ -191,26 +191,99 @@ const KitchenView = () => {
                           </div>
 
                           <div className="mt-3 space-y-2">
-                            {order.orderItems?.map((item) => (
-                              <div
-                                key={item.id}
-                                className="rounded-lg bg-white/5 px-3 py-2 text-sm text-slate-200"
-                              >
-                                <div className="flex justify-between">
-                                  <span className="font-semibold">
-                                    {item.quantity} × {item.menuItemName}
-                                  </span>
-                                  <span className="text-xs text-slate-400">
-                                    ${(item.unitPrice * item.quantity).toFixed(2)}
-                                  </span>
+                            {order.orderItems?.map((item) => {
+                              const instructions = item.specialInstructions ?? ''
+                              const parts = instructions
+                                .split('|')
+                                .map((part) => part.trim())
+                                .filter(Boolean)
+
+                              const findPart = (label) =>
+                                parts.find((part) =>
+                                  part.toLowerCase().startsWith(`${label.toLowerCase()}:`),
+                                )
+
+                              const spice = findPart('Spice')
+                              const sides = findPart('Sides')
+                              const extras = findPart('Extras')
+
+                              const extrasList = extras
+                                ? extras
+                                    .slice(extras.indexOf(':') + 1)
+                                    .split(',')
+                                    .map((entry) => entry.trim())
+                                    .filter(Boolean)
+                                : []
+
+                              const notes = parts
+                                .filter((part) => {
+                                  const lower = part.toLowerCase()
+                                  return (
+                                    !lower.startsWith('spice:') &&
+                                    !lower.startsWith('sides:') &&
+                                    !lower.startsWith('extras:')
+                                  )
+                                })
+                                .join(' | ')
+
+                              return (
+                                <div
+                                  key={item.id}
+                                  className="rounded-lg bg-white/5 px-3 py-2 text-sm text-slate-200"
+                                >
+                                  <div className="flex justify-between">
+                                    <span className="font-semibold">
+                                      {item.quantity} × {item.menuItemName}
+                                    </span>
+                                    <span className="text-xs text-slate-400">
+                                      ${(item.unitPrice * item.quantity).toFixed(2)}
+                                    </span>
+                                  </div>
+
+                                  {/* Spice Level */}
+                                  {spice && (
+                                    <div className="mt-1 flex items-center gap-1">
+                                      <span className="inline-block rounded-full bg-red-500/20 px-2 py-0.5 text-xs font-medium text-red-300">
+                                        🌶️ {spice.replace('Spice:', '').trim()}
+                                      </span>
+                                    </div>
+                                  )}
+
+                                  {/* Free Sides */}
+                                  {sides && (
+                                    <div className="mt-1">
+                                      <p className="text-xs text-slate-400">
+                                        {sides}
+                                      </p>
+                                    </div>
+                                  )}
+
+                                  {/* Paid Extras - Highlighted prominently */}
+                                  {extrasList.length > 0 && (
+                                    <div className="mt-2 rounded-md border border-green-500/30 bg-green-500/10 px-2 py-1.5">
+                                      <p className="text-xs font-semibold text-green-300">
+                                        💰 PAID EXTRAS:
+                                      </p>
+                                      <ul className="mt-1 space-y-0.5 text-xs text-green-200">
+                                        {extrasList.map((extra) => (
+                                          <li key={extra} className="flex items-center gap-1">
+                                            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-green-300" />
+                                            <span>{extra}</span>
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  )}
+
+                                  {/* Other Notes */}
+                                  {notes && (
+                                    <p className="mt-1 rounded-md bg-amber-500/10 px-2 py-1 text-xs text-amber-200">
+                                      📝 {notes}
+                                    </p>
+                                  )}
                                 </div>
-                                {item.specialInstructions && (
-                                  <p className="mt-1 rounded-md bg-amber-500/10 px-2 py-1 text-xs text-amber-200">
-                                    {item.specialInstructions}
-                                  </p>
-                                )}
-                              </div>
-                            ))}
+                              )
+                            })}
                           </div>
 
                           {order.notes && (

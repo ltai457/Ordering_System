@@ -22,6 +22,7 @@ namespace DigitalMenuSystem.API.Services.Menu
         {
             var items = await _context.MenuItems
                 .Include(i => i.Category)
+                .Include(i => i.AddOns)
                 .Where(i => i.CategoryId == categoryId)
                 .OrderBy(i => i.DisplayOrder)
                 .Select(i => new MenuItemDto
@@ -37,7 +38,16 @@ namespace DigitalMenuSystem.API.Services.Menu
                     IsAvailable = i.IsAvailable,
                     DisplayOrder = i.DisplayOrder,
                     CreatedAt = i.CreatedAt,
-                    UpdatedAt = i.UpdatedAt
+                    UpdatedAt = i.UpdatedAt,
+                    AddOns = i.AddOns.Where(a => a.IsAvailable).OrderBy(a => a.DisplayOrder).Select(a => new MenuItemAddOnDto
+                    {
+                        Id = a.Id,
+                        MenuItemId = a.MenuItemId,
+                        Name = a.Name,
+                        Price = a.Price,
+                        IsAvailable = a.IsAvailable,
+                        DisplayOrder = a.DisplayOrder
+                    }).ToList()
                 })
                 .ToListAsync();
 
@@ -48,6 +58,7 @@ namespace DigitalMenuSystem.API.Services.Menu
         {
             var items = await _context.MenuItems
                 .Include(i => i.Category)
+                .Include(i => i.AddOns)
                 .Where(i => i.Category.RestaurantId == restaurantId)
                 .OrderBy(i => i.Category.DisplayOrder)
                 .ThenBy(i => i.DisplayOrder)
@@ -64,7 +75,16 @@ namespace DigitalMenuSystem.API.Services.Menu
                     IsAvailable = i.IsAvailable,
                     DisplayOrder = i.DisplayOrder,
                     CreatedAt = i.CreatedAt,
-                    UpdatedAt = i.UpdatedAt
+                    UpdatedAt = i.UpdatedAt,
+                    AddOns = i.AddOns.Where(a => a.IsAvailable).OrderBy(a => a.DisplayOrder).Select(a => new MenuItemAddOnDto
+                    {
+                        Id = a.Id,
+                        MenuItemId = a.MenuItemId,
+                        Name = a.Name,
+                        Price = a.Price,
+                        IsAvailable = a.IsAvailable,
+                        DisplayOrder = a.DisplayOrder
+                    }).ToList()
                 })
                 .ToListAsync();
 
@@ -75,6 +95,7 @@ namespace DigitalMenuSystem.API.Services.Menu
         {
             var item = await _context.MenuItems
                 .Include(i => i.Category)
+                .Include(i => i.AddOns)
                 .Where(i => i.Id == itemId)
                 .Select(i => new MenuItemDto
                 {
@@ -89,7 +110,16 @@ namespace DigitalMenuSystem.API.Services.Menu
                     IsAvailable = i.IsAvailable,
                     DisplayOrder = i.DisplayOrder,
                     CreatedAt = i.CreatedAt,
-                    UpdatedAt = i.UpdatedAt
+                    UpdatedAt = i.UpdatedAt,
+                    AddOns = i.AddOns.Where(a => a.IsAvailable).OrderBy(a => a.DisplayOrder).Select(a => new MenuItemAddOnDto
+                    {
+                        Id = a.Id,
+                        MenuItemId = a.MenuItemId,
+                        Name = a.Name,
+                        Price = a.Price,
+                        IsAvailable = a.IsAvailable,
+                        DisplayOrder = a.DisplayOrder
+                    }).ToList()
                 })
                 .FirstOrDefaultAsync();
 

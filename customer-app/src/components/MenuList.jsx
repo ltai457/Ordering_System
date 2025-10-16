@@ -1,6 +1,6 @@
 import MenuItem from './MenuItem'
 
-const MenuList = ({ menuItems, onAddToCart }) => {
+const MenuList = ({ menuItems, category, onAddToCart }) => {
   if (!menuItems || menuItems.length === 0) {
     return (
       <div className="text-center py-12">
@@ -12,7 +12,12 @@ const MenuList = ({ menuItems, onAddToCart }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {menuItems.map((item) => (
-        <MenuItem key={item.id} item={item} onAddToCart={onAddToCart} />
+        <MenuItem
+          key={item.id}
+          item={item}
+          category={category}
+          onAddToCart={onAddToCart}
+        />
       ))}
     </div>
   )

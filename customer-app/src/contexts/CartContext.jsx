@@ -33,57 +33,83 @@ export const CartProvider = ({ children }) => {
     }
   }, [cartItems])
 
-  // Add item to cart with specified quantity
-  const addToCart = (item, quantityToAdd = 1) => {
+  // Add item to cart with specified quantity and customizations
+  const addToCart = (item, quantityToAdd = 1, customization = null) => {
+
     setCartItems((prevItems) => {
-      const existingItem = prevItems.find((i) => i.id === item.id)
+      // If has customization, always add as new item (don't merge with existing)
+      if (customization) {
+        const uniqueId = `${item.id}-${Date.now()}`
+        const newItem = {
+          ...item,
+          cartItemId: uniqueId,
+          quantity: quantityToAdd,
+          customization
+        }
+        return [...prevItems, newItem]
+      }
+
+      // No customization - check if we can merge with existing plain item
+      const existingItem = prevItems.find((i) =>
+        i.id === item.id && !i.customization
+      )
 
       if (existingItem) {
-        // Increase quantity if item already exists
+        // Increase quantity if plain item already exists
         return prevItems.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + quantityToAdd } : i
+          i.id === item.id && !i.customization
+            ? { ...i, quantity: i.quantity + quantityToAdd }
+            : i
         )
       } else {
-        // Add new item with specified quantity
-        return [...prevItems, { ...item, quantity: quantityToAdd }]
+        // Add new plain item
+        return [...prevItems, {
+          ...item,
+          cartItemId: `${item.id}-${Date.now()}`,
+          quantity: quantityToAdd
+        }]
       }
     })
   }
 
-  // Remove item from cart completely
-  const removeFromCart = (itemId) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== itemId))
+  // Remove item from cart completely (use cartItemId for customized items)
+  const removeFromCart = (cartItemId) => {
+    setCartItems((prevItems) => prevItems.filter((item) =>
+      (item.cartItemId || `${item.id}-default`) !== cartItemId
+    ))
   }
 
-  // Update item quantity
-  const updateQuantity = (itemId, quantity) => {
+  // Update item quantity (use cartItemId for customized items)
+  const updateQuantity = (cartItemId, quantity) => {
     if (quantity <= 0) {
-      removeFromCart(itemId)
+      removeFromCart(cartItemId)
       return
     }
 
     setCartItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === itemId ? { ...item, quantity } : item
+        (item.cartItemId || `${item.id}-default`) === cartItemId ? { ...item, quantity } : item
       )
     )
   }
 
-  // Increase quantity by 1
-  const increaseQuantity = (itemId) => {
+  // Increase quantity by 1 (use cartItemId for customized items)
+  const increaseQuantity = (cartItemId) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === itemId ? { ...item, quantity: item.quantity + 1 } : item
+        (item.cartItemId || `${item.id}-default`) === cartItemId
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
       )
     )
   }
 
-  // Decrease quantity by 1
-  const decreaseQuantity = (itemId) => {
+  // Decrease quantity by 1 (use cartItemId for customized items)
+  const decreaseQuantity = (cartItemId) => {
     setCartItems((prevItems) => {
       return prevItems
         .map((item) => {
-          if (item.id === itemId) {
+          if ((item.cartItemId || `${item.id}-default`) === cartItemId) {
             const newQuantity = item.quantity - 1
             return newQuantity > 0 ? { ...item, quantity: newQuantity } : null
           }
@@ -103,9 +129,25 @@ export const CartProvider = ({ children }) => {
     return cartItems.reduce((total, item) => total + item.quantity, 0)
   }
 
-  // Get total price
+  // Get total price (including add-ons)
   const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
+    return cartItems.reduce((total, item) => {
+      let itemTotal = item.price * item.quantity
+
+      // Add cost of paid add-ons if any
+      if (item.customization?.addOns) {
+        const addOnsTotal = item.customization.addOns.reduce((sum, addOn) => {
+          const price =
+            typeof addOn.price === 'number'
+              ? addOn.price
+              : Number.parseFloat(addOn.price ?? '0')
+          return sum + price * addOn.quantity
+        }, 0)
+        itemTotal += addOnsTotal * item.quantity
+      }
+
+      return total + itemTotal
+    }, 0)
   }
 
   const value = {

@@ -32,7 +32,8 @@ namespace DigitalMenuSystem.API.Models
         public int CategoryId { get; set; }
         public MenuCategory Category { get; set; } = null!;
         
-        // Navigation property
+        // Navigation properties
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+        public ICollection<MenuItemAddOn> AddOns { get; set; } = new List<MenuItemAddOn>();
     }
 }

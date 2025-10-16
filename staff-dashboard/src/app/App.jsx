@@ -5,6 +5,7 @@ import DashboardView from '../views/dashboard/DashboardView.jsx'
 import LoginView from '../views/auth/LoginView.jsx'
 import MenuCategoriesView from '../views/menu/MenuCategoriesView.jsx'
 import MenuItemsView from '../views/menu/MenuItemsView.jsx'
+import AddOnLibraryView from '../views/addon-library/AddOnLibraryView.jsx'
 import OrdersView from '../views/orders/OrdersView.jsx'
 import KitchenView from '../views/kitchen/KitchenView.jsx'
 import UserManagementView from '../views/users/UserManagementView.jsx'
@@ -21,6 +22,7 @@ const App = () => (
         <Route path="/dashboard" element={<DashboardView />} />
         <Route path="/menu/categories" element={<MenuCategoriesView />} />
         <Route path="/menu/items" element={<MenuItemsView />} />
+        <Route path="/menu/addon-library" element={<AddOnLibraryView />} />
         <Route path="/orders" element={<OrdersView />} />
         <Route path="/kitchen" element={<KitchenView />} />
         <Route path="/tables" element={<TablesView />} />

@@ -17,6 +17,8 @@ namespace DigitalMenuSystem.API.Data
         public DbSet<Table> Tables { get; set; }
         public DbSet<MenuCategory> MenuCategories { get; set; }
         public DbSet<MenuItem> MenuItems { get; set; }
+        public DbSet<MenuItemAddOn> MenuItemAddOns { get; set; }
+        public DbSet<AddOnLibrary> AddOnLibrary { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
 
@@ -74,6 +76,20 @@ namespace DigitalMenuSystem.API.Data
                 .WithOne(oi => oi.MenuItem)
                 .HasForeignKey(oi => oi.MenuItemId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // MenuItem → MenuItemAddOns (One-to-Many)
+            modelBuilder.Entity<MenuItem>()
+                .HasMany(mi => mi.AddOns)
+                .WithOne(ao => ao.MenuItem)
+                .HasForeignKey(ao => ao.MenuItemId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Restaurant → AddOnLibrary (One-to-Many)
+            modelBuilder.Entity<Restaurant>()
+                .HasMany<AddOnLibrary>()
+                .WithOne(aol => aol.Restaurant)
+                .HasForeignKey(aol => aol.RestaurantId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Role → Users (One-to-Many)
             modelBuilder.Entity<Role>()

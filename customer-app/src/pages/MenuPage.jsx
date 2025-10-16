@@ -147,8 +147,8 @@ const MenuPage = () => {
     }
   }
 
-  const handleAddToCart = (item, quantity = 1) => {
-    addToCart(item, quantity)
+  const handleAddToCart = (item, quantity = 1, customization = null) => {
+    addToCart(item, quantity, customization)
   }
 
   const handleManualTableSubmit = async (event) => {
@@ -387,7 +387,11 @@ const MenuPage = () => {
                   Search Results for "{searchTerm}"
                 </h2>
                 {filteredItems.length > 0 ? (
-                  <MenuList menuItems={filteredItems} onAddToCart={handleAddToCart} />
+                  <MenuList
+                    menuItems={filteredItems}
+                    category={null}
+                    onAddToCart={handleAddToCart}
+                  />
                 ) : (
                   <div className="text-center py-12">
                     <p className="text-gray-500 text-lg">No items found matching your search</p>
@@ -419,7 +423,11 @@ const MenuPage = () => {
                       </div>
 
                       {/* Menu Items */}
-                      <MenuList menuItems={categoryItems} onAddToCart={handleAddToCart} />
+                      <MenuList
+                        menuItems={categoryItems}
+                        category={category}
+                        onAddToCart={handleAddToCart}
+                      />
                     </div>
                   )
                 })}

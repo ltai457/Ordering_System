@@ -17,5 +17,6 @@ namespace DigitalMenuSystem.API.DTOs.Menu
         public int DisplayOrder { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public List<MenuItemAddOnDto> AddOns { get; set; } = new List<MenuItemAddOnDto>();
     }
 }

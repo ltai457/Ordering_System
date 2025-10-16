@@ -1,10 +1,45 @@
 import { useState, useRef, useEffect } from 'react'
+import ItemCustomizationModal from './ItemCustomizationModal'
 
-const MenuItem = ({ item, onAddToCart }) => {
+// Categories that should NOT have customization options
+const NON_CUSTOMIZABLE_CATEGORIES = [
+  'drinks',
+  'beverage',
+  'beverages',
+  'desserts',
+  'dessert',
+  'ភេសជ្ជៈ drinks',
+]
+
+const MenuItem = ({ item, category, onAddToCart }) => {
   const [quantity, setQuantity] = useState(1)
   const [showConfirmation, setShowConfirmation] = useState(false)
+  const [showCustomizationModal, setShowCustomizationModal] = useState(false)
   const [lastQuantityAdded, setLastQuantityAdded] = useState(0)
   const confirmationTimeout = useRef(null)
+
+  const itemAddOns = (
+    Array.isArray(item?.addOns)
+      ? item.addOns
+      : Array.isArray(item?.AddOns)
+        ? item.AddOns
+        : []
+  ).map((addOn) => ({
+    ...addOn,
+    price:
+      typeof addOn.price === 'number'
+        ? addOn.price
+        : Number.parseFloat(addOn.price ?? '0'),
+  }))
+
+  const hasAddOns = itemAddOns.length > 0
+
+  // Allow customization if the category permits it or the item has add-ons
+  const allowCustomization = hasAddOns
+    ? true
+    : category
+      ? !NON_CUSTOMIZABLE_CATEGORIES.includes(category.name.toLowerCase())
+      : true // Default to true for search results
 
   useEffect(() => {
     return () => {
@@ -14,9 +49,28 @@ const MenuItem = ({ item, onAddToCart }) => {
     }
   }, [])
 
-  const handleAddToCart = () => {
-    onAddToCart(item, quantity)
+  const handleQuickAdd = () => {
+    // Quick add without customization
+    onAddToCart(item, quantity, null)
     setLastQuantityAdded(quantity)
+    setShowConfirmation(true)
+
+    if (confirmationTimeout.current) {
+      clearTimeout(confirmationTimeout.current)
+    }
+
+    confirmationTimeout.current = setTimeout(() => {
+      setShowConfirmation(false)
+    }, 1800)
+  }
+
+  const handleCustomize = () => {
+    setShowCustomizationModal(true)
+  }
+
+  const handleAddWithCustomization = (item, qty, customization) => {
+    onAddToCart(item, qty, customization)
+    setLastQuantityAdded(qty)
     setShowConfirmation(true)
 
     if (confirmationTimeout.current) {
@@ -39,7 +93,20 @@ const MenuItem = ({ item, onAddToCart }) => {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
+    <>
+      {showCustomizationModal && (
+        <ItemCustomizationModal
+          item={{
+            ...item,
+            addOns: itemAddOns,
+          }}
+          category={category}
+          onClose={() => setShowCustomizationModal(false)}
+          onAddToCart={handleAddWithCustomization}
+        />
+      )}
+
+      <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
       {/* Item Image */}
       <div className="relative h-48 bg-white">
         {item.imageUrl ? (
@@ -119,21 +186,39 @@ const MenuItem = ({ item, onAddToCart }) => {
             )}
           </div>
 
-          {/* Add to Cart Button */}
-          <button
-            onClick={handleAddToCart}
-            disabled={!item.isAvailable}
-            className={`
-            w-full py-2.5 rounded-lg font-semibold transition-all
-            ${
-              item.isAvailable
-                ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-md hover:shadow-lg'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            }
-          `}
-          >
-            {item.isAvailable ? `Add to Cart - $${(item.price * quantity).toFixed(2)}` : 'Unavailable'}
-          </button>
+          {/* Action Buttons */}
+          {item.isAvailable ? (
+            allowCustomization ? (
+              <div className="flex gap-2">
+                <button
+                  onClick={handleCustomize}
+                  className="flex-1 py-2.5 rounded-lg font-semibold bg-white border-2 border-orange-500 text-orange-500 hover:bg-orange-50 transition-all"
+                >
+                  Customize
+                </button>
+                <button
+                  onClick={handleQuickAdd}
+                  className="flex-1 py-2.5 rounded-lg font-semibold bg-orange-500 hover:bg-orange-600 text-white shadow-md hover:shadow-lg transition-all"
+                >
+                  Quick Add
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={handleQuickAdd}
+                className="w-full py-2.5 rounded-lg font-semibold bg-orange-500 hover:bg-orange-600 text-white shadow-md hover:shadow-lg transition-all"
+              >
+                Add to Cart
+              </button>
+            )
+          ) : (
+            <button
+              disabled
+              className="w-full py-2.5 rounded-lg font-semibold bg-gray-300 text-gray-500 cursor-not-allowed"
+            >
+              Unavailable
+            </button>
+          )}
 
           {showConfirmation && item.isAvailable && (
             <div className="rounded-lg bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700 shadow-sm">
@@ -142,7 +227,8 @@ const MenuItem = ({ item, onAddToCart }) => {
           )}
         </div>
       </div>
-    </div>
+      </div>
+    </>
   )
 }
 

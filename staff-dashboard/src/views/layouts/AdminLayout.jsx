@@ -21,6 +21,7 @@ const AdminLayout = () => {
       { to: '/dashboard', label: 'Overview', icon: DashboardIcon },
       { to: '/menu/categories', label: 'Menu Categories', icon: MenuIcon },
       { to: '/menu/items', label: 'Menu Items', icon: ItemsIcon },
+      { to: '/menu/addon-library', label: 'Add-on Library', icon: LibraryIcon },
       { to: '/orders', label: 'Orders', icon: OrdersIcon },
       { to: '/kitchen', label: 'Kitchen Display', icon: KitchenIcon },
       { to: '/tables', label: 'Tables', icon: TablesIcon },
@@ -197,6 +198,19 @@ const ItemsIcon = (props) => (
     {...props}
   >
     <path d="M12 8.25v-1.5m0 1.5c-1.355 0-2.697.056-4.024.166C6.845 8.51 6 9.473 6 10.608v2.513m6-4.871c1.355 0 2.697.056 4.024.166C17.155 8.51 18 9.473 18 10.608v2.513M15 8.25v-1.5m-6 1.5v-1.5m12 9.75-1.5.75a3.354 3.354 0 0 1-3 0 3.354 3.354 0 0 0-3 0 3.354 3.354 0 0 1-3 0 3.354 3.354 0 0 0-3 0 3.354 3.354 0 0 1-3 0L3 15.75m18 0v-2.513m0 2.513v.375c0 .621-.504 1.125-1.125 1.125h-15.75A1.125 1.125 0 0 1 3 16.125V15.75m18-2.513v-2.013a2.25 2.25 0 0 0-1.5-2.122l-1.5-.5m-15 4.635v2.513m0-2.513V11.25a2.25 2.25 0 0 1 1.5-2.122l1.5-.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+
+const LibraryIcon = (props) => (
+  <svg
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 )
 

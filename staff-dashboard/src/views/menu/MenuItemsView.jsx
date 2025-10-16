@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import clsx from 'clsx'
 import useMenuItemsViewModel from '../../viewmodels/menu/useMenuItemsViewModel.js'
+import ManageAddOnsModal from '../../components/ManageAddOnsModal.jsx'
 
 const MenuItemsView = () => {
   const {
@@ -26,6 +28,8 @@ const MenuItemsView = () => {
     handleToggleAvailability,
     reload,
   } = useMenuItemsViewModel()
+
+  const [addOnsModalItem, setAddOnsModalItem] = useState(null)
 
   return (
     <div className="space-y-6">
@@ -104,43 +108,50 @@ const MenuItemsView = () => {
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {items.map((item) => (
-              <article
-                className="flex h-full flex-col rounded-2xl border border-white/10 bg-sidebar/70 shadow-lg transition hover:border-primary/40 hover:shadow-primary/10 overflow-hidden"
-                key={item.id}
-              >
-                <div className="flex flex-col h-full">
-                  {/* Image container with aspect ratio */}
-                  {item.imageUrl ? (
-                    <div className="w-full aspect-[16/10] bg-surface/50 overflow-hidden">
-                      <img
-                        src={item.imageUrl}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-full aspect-[16/10] bg-surface/50 flex items-center justify-center">
-                      <svg
-                        className="h-12 w-12 sm:h-16 sm:w-16 text-slate-600"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </div>
-                  )}
+            {items.map((item) => {
+              const itemAddOns = Array.isArray(item?.addOns)
+                ? item.addOns
+                : Array.isArray(item?.AddOns)
+                  ? item.AddOns
+                  : []
 
-                  {/* Content section */}
-                  <div className="flex flex-col flex-1 p-4 sm:p-5">
+              return (
+                <article
+                  className="flex h-full flex-col rounded-2xl border border-white/10 bg-sidebar/70 shadow-lg transition hover:border-primary/40 hover:shadow-primary/10 overflow-hidden"
+                  key={item.id}
+                >
+                  <div className="flex flex-col h-full">
+                    {/* Image container with aspect ratio */}
+                    {item.imageUrl ? (
+                      <div className="w-full aspect-[16/10] bg-surface/50 overflow-hidden">
+                        <img
+                          src={item.imageUrl}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-full aspect-[16/10] bg-surface/50 flex items-center justify-center">
+                        <svg
+                          className="h-12 w-12 sm:h-16 sm:w-16 text-slate-600"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </div>
+                    )}
+
+                    {/* Content section */}
+                    <div className="flex flex-col flex-1 p-4 sm:p-5">
                     <div className="flex-1 space-y-3">
                       <div className="flex items-start justify-between gap-2">
                         <h3 className="text-base sm:text-lg font-semibold text-white line-clamp-2">{item.name}</h3>
@@ -169,6 +180,39 @@ const MenuItemsView = () => {
                         {item.description || 'No description provided.'}
                       </p>
 
+                      {itemAddOns.length > 0 && (
+                        <div className="rounded-lg border border-white/5 bg-white/5 px-3 py-2 space-y-1.5">
+                          <p className="text-xs font-semibold text-slate-200 uppercase tracking-wide">
+                            Add-ons
+                          </p>
+                          <div className="space-y-1">
+                            {itemAddOns.slice(0, 3).map((addOn) => {
+                              const price =
+                                typeof addOn.price === 'number'
+                                  ? addOn.price
+                                  : Number.parseFloat(addOn.price ?? '0')
+                              return (
+                                <div
+                                  key={addOn.id}
+                                  className="flex items-center justify-between text-xs text-slate-300"
+                                >
+                                  <span className="truncate">{addOn.name}</span>
+                                  <span className="ml-2 font-semibold text-primary">
+                                    +${price.toFixed(2)}
+                                  </span>
+                                </div>
+                              )
+                            })}
+                            {itemAddOns.length > 3 && (
+                              <p className="text-[11px] text-slate-500">
+                                + {itemAddOns.length - 3} more add-on
+                                {itemAddOns.length - 3 === 1 ? '' : 's'}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
                       {item.dietaryInfo ? (
                         <div className="flex items-center gap-1">
                           <svg
@@ -192,6 +236,30 @@ const MenuItemsView = () => {
 
                     {/* Action buttons */}
                     <div className="mt-4 flex flex-col gap-2">
+                      <button
+                        className="flex items-center justify-center gap-2 rounded-lg border border-green-500/30 bg-green-500/10 px-3 py-2 text-xs font-semibold text-green-200 transition hover:border-green-500/60 hover:bg-green-500/20"
+                        onClick={() => setAddOnsModalItem(item)}
+                        type="button"
+                      >
+                        <svg
+                          className="h-4 w-4 flex-shrink-0"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M12 4.5v15m7.5-7.5h-15"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <span className="truncate">
+                          Manage Add-ons ({itemAddOns.length})
+                        </span>
+                      </button>
+
                       <button
                         className="flex items-center justify-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-primary/40 hover:bg-primary/10"
                         onClick={() => handleToggleAvailability(item)}
@@ -239,9 +307,10 @@ const MenuItemsView = () => {
                       </div>
                     </div>
                   </div>
-                </div>
-              </article>
-            ))}
+                  </div>
+                </article>
+              )
+            })}
           </div>
         )}
       </section>
@@ -455,6 +524,17 @@ const MenuItemsView = () => {
           </div>
         </div>
       ) : null}
+
+      {addOnsModalItem && (
+        <ManageAddOnsModal
+          menuItem={addOnsModalItem}
+          onClose={() => setAddOnsModalItem(null)}
+          onSave={() => {
+            setAddOnsModalItem(null)
+            reload()
+          }}
+        />
+      )}
     </div>
   )
 }
