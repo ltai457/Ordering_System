@@ -11,28 +11,28 @@ const login = async (credentials) => {
   )
 
   if (payload?.token) {
-    localStorage.setItem(TOKEN_STORAGE_KEY, payload.token)
+    sessionStorage.setItem(TOKEN_STORAGE_KEY, payload.token)
   }
 
-  localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(payload))
+  sessionStorage.setItem(USER_STORAGE_KEY, JSON.stringify(payload))
 
   return payload
 }
 
 const fetchCurrentUser = async () => {
   const data = await apiClient.get('/api/Auth/me')
-  localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(data))
+  sessionStorage.setItem(USER_STORAGE_KEY, JSON.stringify(data))
   return data
 }
 
 const getStoredUser = () => {
-  const raw = localStorage.getItem(USER_STORAGE_KEY)
+  const raw = sessionStorage.getItem(USER_STORAGE_KEY)
   return raw ? JSON.parse(raw) : null
 }
 
 const logout = () => {
-  localStorage.removeItem(TOKEN_STORAGE_KEY)
-  localStorage.removeItem(USER_STORAGE_KEY)
+  sessionStorage.removeItem(TOKEN_STORAGE_KEY)
+  sessionStorage.removeItem(USER_STORAGE_KEY)
 }
 
 const authService = {

@@ -8,7 +8,7 @@ const useAuthLayoutViewModel = () => {
   const location = useLocation()
 
   useEffect(() => {
-    const token = localStorage.getItem(TOKEN_STORAGE_KEY)
+    const token = sessionStorage.getItem(TOKEN_STORAGE_KEY)
     if (token) {
       const { state } = location
       const redirectTo =

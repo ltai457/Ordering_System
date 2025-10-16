@@ -162,6 +162,8 @@ namespace DigitalMenuSystem.API.Services.Order
                 Id = order.Id,
                 TableId = order.TableId,
                 TableNumber = order.Table.TableNumber,
+                TableCode = order.Table.TableCode,
+                TableLocation = order.Table.Location,
                 Status = order.Status,
                 TotalAmount = order.TotalAmount,
                 Notes = order.Notes,

@@ -1,8 +1,52 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { useEffect, useMemo } from 'react'
 import useAdminLayoutViewModel from '../../viewmodels/layouts/useAdminLayoutViewModel.js'
 
 const AdminLayout = () => {
   const { user, isChecking, handleLogout } = useAdminLayoutViewModel()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const roleName = user?.roleName?.toLowerCase() ?? ''
+  const isKitchenUser = roleName === 'chef'
+  const isSuperAdmin = roleName === 'superadmin'
+
+  const navigationItems = useMemo(() => {
+    if (isKitchenUser) {
+      return [
+        { to: '/kitchen', label: 'Kitchen Display', icon: KitchenIcon },
+      ]
+    }
+
+    const items = [
+      { to: '/dashboard', label: 'Overview', icon: DashboardIcon },
+      { to: '/menu/categories', label: 'Menu Categories', icon: MenuIcon },
+      { to: '/menu/items', label: 'Menu Items', icon: ItemsIcon },
+      { to: '/orders', label: 'Orders', icon: OrdersIcon },
+      { to: '/kitchen', label: 'Kitchen Display', icon: KitchenIcon },
+      { to: '/tables', label: 'Tables', icon: TablesIcon },
+    ]
+
+    if (isSuperAdmin) {
+      items.splice(4, 0, { to: '/users', label: 'Staff Accounts', icon: UsersIcon })
+    }
+
+    return items
+  }, [isKitchenUser, isSuperAdmin])
+
+  const allowedPaths = useMemo(
+    () => navigationItems.map((item) => item.to),
+    [navigationItems],
+  )
+
+  useEffect(() => {
+    if (isChecking || !isKitchenUser) {
+      return
+    }
+
+    if (!allowedPaths.includes(location.pathname)) {
+      navigate('/kitchen', { replace: true })
+    }
+  }, [allowedPaths, isChecking, isKitchenUser, location.pathname, navigate])
 
   if (isChecking) {
     return (
@@ -21,17 +65,9 @@ const AdminLayout = () => {
     return null
   }
 
-  const navigationItems = [
-    { to: '/dashboard', label: 'Overview', icon: DashboardIcon },
-    { to: '/menu/categories', label: 'Menu Categories', icon: MenuIcon },
-    { to: '/menu/items', label: 'Menu Items', icon: ItemsIcon },
-    { to: '/orders', label: 'Orders', icon: OrdersIcon },
-    { to: '/tables', label: 'Tables', icon: TablesIcon },
-  ]
-
   return (
     <div className="flex min-h-screen bg-surface text-slate-100">
-      <aside className="hidden w-64 flex-col border-r border-white/10 bg-sidebar/95 px-6 py-8 lg:flex">
+      <aside className="hidden w-64 flex-col border-r border-white/10 bg-sidebar/95 px-6 py-8 lg:flex fixed left-0 top-0 bottom-0 overflow-y-auto">
         <div className="flex items-center gap-3">
           <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/20 text-primary">
             <DashboardIcon className="h-6 w-6" />
@@ -84,14 +120,16 @@ const AdminLayout = () => {
         </div>
       </aside>
 
-      <div className="flex flex-1 flex-col">
-        <header className="flex items-center justify-between border-b border-white/10 bg-sidebar/80 px-6 py-4 backdrop-blur">
+      <div className="flex flex-1 flex-col lg:ml-64">
+        <header className="flex items-center justify-between border-b border-white/10 bg-sidebar/80 px-6 py-4 backdrop-blur fixed top-0 right-0 left-0 lg:left-64 z-30">
           <div>
             <h1 className="text-lg font-semibold text-white">
               {user?.restaurantName ?? 'My Restaurant'}
             </h1>
             <p className="text-xs text-slate-400">
-              Manage menu, orders, and floor in real time.
+              {isKitchenUser
+                ? 'Kitchen mode — stay on top of incoming tickets.'
+                : 'Manage menu, orders, and floor in real time.'}
             </p>
           </div>
 
@@ -112,7 +150,7 @@ const AdminLayout = () => {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto bg-surface px-6 py-8">
+        <main className="flex-1 overflow-y-auto bg-surface px-6 py-8 mt-[73px]">
           <Outlet />
         </main>
       </div>
@@ -189,6 +227,56 @@ const TablesIcon = (props) => (
   >
     <path d="M4 7h16l-1 10H5L4 7Z" />
     <path d="M9 7V5h6v2" />
+  </svg>
+)
+
+const KitchenIcon = (props) => (
+  <svg
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path
+      d="M4.5 4.5h15v6h-15zM7.5 10.5v9m9-9v9M4.5 19.5h15"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path d="M9 13.5h6" strokeLinecap="round" />
+  </svg>
+)
+
+const UsersIcon = (props) => (
+  <svg
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path
+      d="M15.75 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M4.5 19.5a6 6 0 1 1 12 0"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M18.75 9.75a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M21 19.5a3.75 3.75 0 0 0-5.678-3.215"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
 )
 

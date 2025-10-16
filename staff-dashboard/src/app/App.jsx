@@ -6,6 +6,9 @@ import LoginView from '../views/auth/LoginView.jsx'
 import MenuCategoriesView from '../views/menu/MenuCategoriesView.jsx'
 import MenuItemsView from '../views/menu/MenuItemsView.jsx'
 import OrdersView from '../views/orders/OrdersView.jsx'
+import KitchenView from '../views/kitchen/KitchenView.jsx'
+import UserManagementView from '../views/users/UserManagementView.jsx'
+import TablesView from '../views/tables/TablesView.jsx'
 
 const App = () => (
   <BrowserRouter>
@@ -19,6 +22,9 @@ const App = () => (
         <Route path="/menu/categories" element={<MenuCategoriesView />} />
         <Route path="/menu/items" element={<MenuItemsView />} />
         <Route path="/orders" element={<OrdersView />} />
+        <Route path="/kitchen" element={<KitchenView />} />
+        <Route path="/tables" element={<TablesView />} />
+        <Route path="/users" element={<UserManagementView />} />
       </Route>
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>

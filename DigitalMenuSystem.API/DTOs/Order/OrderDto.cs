@@ -8,6 +8,8 @@ namespace DigitalMenuSystem.API.DTOs.Order
         public int Id { get; set; }
         public int TableId { get; set; }
         public string TableNumber { get; set; } = string.Empty;
+        public string TableCode { get; set; } = string.Empty;
+        public string? TableLocation { get; set; }
         public string Status { get; set; } = string.Empty;
         public decimal TotalAmount { get; set; }
         public string? Notes { get; set; }

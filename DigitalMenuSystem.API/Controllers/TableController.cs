@@ -101,6 +101,31 @@ namespace DigitalMenuSystem.API.Controllers
         }
 
         /// <summary>
+        /// Get table by table number (allow customers to enter manually)
+        /// </summary>
+        [HttpGet("restaurant/{restaurantId}/number/{tableNumber}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetTableByNumber(int restaurantId, string tableNumber)
+        {
+            try
+            {
+                var table = await _tableService.GetTableByNumberAsync(restaurantId, tableNumber);
+
+                if (table == null)
+                {
+                    return NotFound(new { message = $"Table {tableNumber} not found for restaurant {restaurantId}" });
+                }
+
+                return Ok(table);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error getting table number {tableNumber} for restaurant {restaurantId}");
+                return StatusCode(500, new { message = "Error retrieving table" });
+            }
+        }
+
+        /// <summary>
         /// Get all tables for a restaurant
         /// </summary>
         [HttpGet("restaurant/{restaurantId}")]

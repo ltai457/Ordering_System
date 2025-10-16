@@ -9,7 +9,7 @@ const buildHeaders = (headers, includeAuth) => {
   }
 
   if (includeAuth) {
-    const token = localStorage.getItem('dms.auth.token')
+    const token = sessionStorage.getItem('dms.auth.token')
     if (token) {
       baseHeaders.set('Authorization', `Bearer ${token}`)
     }
@@ -61,7 +61,7 @@ const postFormData = async (endpoint, formData, options = {}) => {
 
   const headers = new Headers()
   if (auth) {
-    const token = localStorage.getItem('dms.auth.token')
+    const token = sessionStorage.getItem('dms.auth.token')
     if (token) {
       headers.set('Authorization', `Bearer ${token}`)
     }

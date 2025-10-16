@@ -8,7 +8,10 @@
       "Bash(npm install:*)",
       "Bash(pkill:*)",
       "Read(//Users/lk333/Downloads/ChanganBBQ-main/src/**)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(lsof:*)",
+      "Bash(cat:*)",
+      "Bash(xargs kill:*)"
     ],
     "deny": [],
     "ask": []

@@ -12,7 +12,7 @@ const useAdminLayoutViewModel = () => {
   const [isChecking, setIsChecking] = useState(true)
 
   useEffect(() => {
-    const token = localStorage.getItem(TOKEN_STORAGE_KEY)
+    const token = sessionStorage.getItem(TOKEN_STORAGE_KEY)
 
     if (!token) {
       setIsChecking(false)

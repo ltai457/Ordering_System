@@ -77,6 +77,18 @@ namespace DigitalMenuSystem.API.Services.Table
             return table == null ? null : MapToDto(table);
         }
 
+        public async Task<TableDto?> GetTableByNumberAsync(int restaurantId, string tableNumber)
+        {
+            var normalizedNumber = tableNumber.Trim().ToLower();
+
+            var table = await _context.Tables
+                .FirstOrDefaultAsync(t =>
+                    t.RestaurantId == restaurantId &&
+                    t.TableNumber.ToLower() == normalizedNumber);
+
+            return table == null ? null : MapToDto(table);
+        }
+
         public async Task<List<TableDto>> GetTablesByRestaurantAsync(int restaurantId)
         {
             var tables = await _context.Tables

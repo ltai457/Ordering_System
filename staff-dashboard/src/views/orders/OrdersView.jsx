@@ -41,6 +41,7 @@ const OrdersView = () => {
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case 'pending':
+      case 'received':
         return 'bg-yellow-500/10 text-yellow-200 border-yellow-500/30'
       case 'preparing':
         return 'bg-blue-500/10 text-blue-200 border-blue-500/30'
@@ -58,6 +59,7 @@ const OrdersView = () => {
   const getNextStatus = (currentStatus) => {
     switch (currentStatus?.toLowerCase()) {
       case 'pending':
+      case 'received':
         return 'Preparing'
       case 'preparing':
         return 'Ready'
@@ -135,7 +137,17 @@ const OrdersView = () => {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h3 className="text-lg font-bold text-white">Order #{order.id}</h3>
-                  <p className="text-sm text-slate-400">{order.customerName}</p>
+                  <p className="text-sm text-slate-400 flex flex-wrap gap-2">
+                    <span>
+                      {order.tableNumber ? `Table ${order.tableNumber}` : 'Table not assigned'}
+                      {order.tableLocation ? ` • ${order.tableLocation}` : ''}
+                    </span>
+                    {order.tableCode ? (
+                      <span className="inline-flex items-center rounded-md border border-slate-600/40 px-2 py-0.5 text-xs uppercase tracking-wide text-slate-300">
+                        Code: {order.tableCode}
+                      </span>
+                    ) : null}
+                  </p>
                 </div>
                 <span
                   className={clsx(
@@ -163,7 +175,13 @@ const OrdersView = () => {
                       strokeLinejoin="round"
                     />
                   </svg>
-                  Table {order.tableNumber} - {order.tableLocation}
+                  Table {order.tableNumber || '—'}
+                  {order.tableLocation ? ` • ${order.tableLocation}` : ''}
+                  {order.tableCode ? (
+                    <span className="ml-2 rounded-md border border-slate-600/40 px-2 py-0.5 text-[10px] uppercase tracking-wide text-slate-300">
+                      {order.tableCode}
+                    </span>
+                  ) : null}
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-300">
                   <svg
@@ -192,14 +210,21 @@ const OrdersView = () => {
               )}
 
               <div className="space-y-2 mb-4 border-t border-white/10 pt-4">
-                {order.items?.map((item, idx) => (
-                  <div key={idx} className="flex justify-between text-sm">
-                    <span className="text-slate-300">
-                      {item.quantity}x {item.menuItemName}
-                    </span>
-                    <span className="text-slate-400">
-                      ${(item.priceAtOrder * item.quantity).toFixed(2)}
-                    </span>
+                {order.orderItems?.map((item) => (
+                  <div key={item.id} className="space-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-slate-300">
+                        {item.quantity}x {item.menuItemName}
+                      </span>
+                      <span className="text-slate-400">
+                        ${(item.unitPrice * item.quantity).toFixed(2)}
+                      </span>
+                    </div>
+                    {item.specialInstructions && (
+                      <p className="text-xs text-amber-200 bg-amber-500/10 border border-amber-500/20 rounded-md px-2 py-1">
+                        Note: {item.specialInstructions}
+                      </p>
+                    )}
                   </div>
                 ))}
                 <div className="flex justify-between border-t border-white/10 pt-2 font-semibold">
