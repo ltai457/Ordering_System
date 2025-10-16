@@ -183,16 +183,16 @@ const MenuPage = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          {/* Logo and Restaurant Name - Centered */}
-          <div className="flex items-center justify-center mb-4">
-            <div className="flex items-center gap-3">
+        <div className="max-w-7xl mx-auto px-4 py-3">
+          {/* Logo and Restaurant Name - Better mobile layout */}
+          <div className="flex items-center justify-center mb-3">
+            <div className="flex items-center gap-2">
               <img
                 src="/logo.png"
                 alt="Restaurant Logo"
-                className="w-14 h-14 object-contain"
+                className="w-10 h-10 sm:w-12 sm:h-12 object-contain flex-shrink-0"
               />
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-lg sm:text-2xl font-bold text-gray-900 whitespace-nowrap">
                 ChangAn BBQ
               </h1>
             </div>
@@ -223,10 +223,10 @@ const MenuPage = () => {
           </div>
 
           {/* Cart Button - Absolute positioned on right */}
-          <div className="absolute top-4 right-4">
+          <div className="absolute top-3 right-3 sm:top-4 sm:right-4">
             <button
               onClick={() => navigate('/cart')}
-              className="relative bg-orange-500 hover:bg-orange-600 text-white font-semibold px-5 py-2.5 rounded-lg transition-colors shadow-md"
+              className="relative bg-orange-500 hover:bg-orange-600 text-white font-semibold px-3 py-2 sm:px-5 sm:py-2.5 rounded-lg transition-colors shadow-md"
             >
               <div className="flex items-center gap-2">
                 <svg

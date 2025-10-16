@@ -41,12 +41,12 @@ const MenuItem = ({ item, onAddToCart }) => {
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
       {/* Item Image */}
-      <div className="relative h-48 bg-gray-200">
+      <div className="relative h-48 bg-white">
         {item.imageUrl ? (
           <img
             src={item.imageUrl}
             alt={item.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
             onError={(e) => {
               e.target.src = 'https://via.placeholder.com/400x300?text=No+Image'
             }}
