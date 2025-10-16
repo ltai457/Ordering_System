@@ -253,7 +253,7 @@ namespace DigitalMenuSystem.API.Services.Menu
             var items = await _context.MenuItems
                 .Include(i => i.Category)
                 .Where(i => i.Category.RestaurantId == restaurantId &&
-                           (i.Name.Contains(searchTerm) || 
+                           (i.Name.Contains(searchTerm) ||
                             i.Description!.Contains(searchTerm)))
                 .OrderBy(i => i.DisplayOrder)
                 .Select(i => new MenuItemDto
@@ -274,6 +274,37 @@ namespace DigitalMenuSystem.API.Services.Menu
                 .ToListAsync();
 
             return items;
+        }
+
+        public async Task<bool> ReorderMenuItemsAsync(int categoryId, int[] menuItemIds)
+        {
+            // Validate that all menu items belong to the category
+            var menuItems = await _context.MenuItems
+                .Where(i => i.CategoryId == categoryId && menuItemIds.Contains(i.Id))
+                .ToListAsync();
+
+            if (menuItems.Count != menuItemIds.Length)
+            {
+                _logger.LogWarning($"Some menu item IDs don't belong to category {categoryId}");
+                return false;
+            }
+
+            // Update display order based on array position
+            for (int i = 0; i < menuItemIds.Length; i++)
+            {
+                var menuItem = menuItems.FirstOrDefault(m => m.Id == menuItemIds[i]);
+                if (menuItem != null)
+                {
+                    menuItem.DisplayOrder = i;
+                    menuItem.UpdatedAt = DateTime.UtcNow;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"Reordered {menuItems.Count} menu items for category {categoryId}");
+
+            return true;
         }
     }
 }

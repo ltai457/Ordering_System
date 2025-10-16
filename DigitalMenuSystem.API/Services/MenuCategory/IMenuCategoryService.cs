@@ -33,5 +33,10 @@ namespace DigitalMenuSystem.API.Services.Menu
         /// Check if category exists
         /// </summary>
         Task<bool> CategoryExistsAsync(int categoryId);
+
+        /// <summary>
+        /// Reorder categories for a restaurant
+        /// </summary>
+        Task<bool> ReorderCategoriesAsync(int restaurantId, int[] categoryIds);
     }
 }

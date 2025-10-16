@@ -43,5 +43,10 @@ namespace DigitalMenuSystem.API.Services.Menu
         /// Search menu items by name
         /// </summary>
         Task<List<MenuItemDto>> SearchItemsAsync(int restaurantId, string searchTerm);
+
+        /// <summary>
+        /// Reorder menu items within a category
+        /// </summary>
+        Task<bool> ReorderMenuItemsAsync(int categoryId, int[] menuItemIds);
     }
 }

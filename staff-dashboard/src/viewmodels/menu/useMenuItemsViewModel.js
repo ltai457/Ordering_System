@@ -165,6 +165,38 @@ const useMenuItemsViewModel = () => {
     }
   }
 
+  const handleReorder = async (categoryId, sourceIndex, destinationIndex) => {
+    if (sourceIndex === destinationIndex) {
+      return
+    }
+
+    // Create a backup of the current items
+    const previousItems = [...items]
+
+    // Get items for this category only
+    const categoryItems = filteredItems.filter(item => item.categoryId === categoryId)
+
+    // Reorder the items within this category
+    const reordered = Array.from(categoryItems)
+    const [movedItem] = reordered.splice(sourceIndex, 1)
+    reordered.splice(destinationIndex, 0, movedItem)
+
+    // Update the items state with the new order
+    const otherItems = items.filter(item => item.categoryId !== categoryId)
+    setItems([...otherItems, ...reordered])
+
+    try {
+      // Send the new order to the backend
+      const menuItemIds = reordered.map((item) => item.id)
+      await menuItemService.reorder(categoryId, menuItemIds)
+      setSuccessMessage('Menu items reordered successfully')
+    } catch (err) {
+      // Revert to the previous state on error
+      setItems(previousItems)
+      setError(err.message ?? 'Unable to reorder menu items')
+    }
+  }
+
   const filteredItems = useMemo(() => {
     let filtered = [...items]
 
@@ -215,6 +247,7 @@ const useMenuItemsViewModel = () => {
     handleSubmit,
     handleDelete,
     handleToggleAvailability,
+    handleReorder,
     reload: loadItems,
   }
 }

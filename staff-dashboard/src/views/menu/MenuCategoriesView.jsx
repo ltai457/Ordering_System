@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import useMenuCategoriesViewModel from '../../viewmodels/menu/useMenuCategoriesViewModel.js'
 
 const MenuCategoriesView = () => {
@@ -19,10 +20,19 @@ const MenuCategoriesView = () => {
     handleSubmit,
     handleDelete,
     handleToggleVisibility,
+    handleReorder,
     statusFilter,
     setStatusFilter,
     reload,
   } = useMenuCategoriesViewModel()
+
+  const onDragEnd = (result) => {
+    if (!result.destination) {
+      return
+    }
+
+    handleReorder(result.source.index, result.destination.index)
+  }
 
   return (
     <div className="space-y-6">
@@ -96,16 +106,31 @@ const MenuCategoriesView = () => {
               ? 'No hidden categories.'
               : statusFilter === 'visible'
                 ? 'No visible categories yet.'
-                : 'No categories yet. Click “New Category” to create the first one.'}
+                : 'No categories yet. Click "New Category" to create the first one.'}
           </div>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {categories.map((category) => (
-              <article
-                className="flex h-full flex-col rounded-2xl border border-white/10 bg-sidebar/70 shadow-lg transition hover:border-primary/40 hover:shadow-primary/10 overflow-hidden"
-                key={category.id}
-              >
-                <div className="flex flex-col h-full">
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="categories-list" direction="horizontal">
+              {(provided) => (
+                <div
+                  className="grid gap-4 md:grid-cols-2 xl:grid-cols-3"
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                >
+                  {categories.map((category, index) => (
+                    <Draggable key={category.id} draggableId={String(category.id)} index={index}>
+                      {(provided, snapshot) => (
+                        <article
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          className={clsx(
+                            "flex h-full flex-col rounded-2xl border bg-sidebar/70 shadow-lg transition overflow-hidden",
+                            snapshot.isDragging
+                              ? "border-primary/60 shadow-primary/30 ring-2 ring-primary/40"
+                              : "border-white/10 hover:border-primary/40 hover:shadow-primary/10"
+                          )}
+                        >
+                          <div className="flex flex-col h-full">
                   {/* Image container with aspect ratio */}
                   {category.imageUrl ? (
                     <div className="w-full aspect-[16/10] bg-surface/50 overflow-hidden">
@@ -137,6 +162,33 @@ const MenuCategoriesView = () => {
 
                   {/* Content section */}
                   <div className="flex flex-col flex-1 p-4 sm:p-5">
+                    {/* Drag handle and position */}
+                    <div className="flex items-center justify-between mb-3 pb-2 border-b border-white/10">
+                      <div
+                        {...provided.dragHandleProps}
+                        className="flex items-center gap-2 cursor-grab active:cursor-grabbing text-slate-400 hover:text-primary transition"
+                      >
+                        <svg
+                          className="h-5 w-5"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M3 7h18M3 12h18M3 17h18"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <span className="text-xs font-medium">Drag to reorder</span>
+                      </div>
+                      <span className="text-xs font-semibold text-primary bg-primary/10 px-2 py-1 rounded">
+                        Position #{index + 1}
+                      </span>
+                    </div>
+
                     <div className="flex-1 space-y-3">
                       <div className="flex items-start justify-between gap-2">
                         <h3 className="text-base sm:text-lg font-semibold text-white line-clamp-2">{category.name}</h3>
@@ -215,9 +267,15 @@ const MenuCategoriesView = () => {
                     </div>
                   </div>
                 </div>
-              </article>
-            ))}
-          </div>
+                        </article>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
         )}
       </section>
 

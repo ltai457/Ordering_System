@@ -43,6 +43,12 @@ const search = async (searchTerm) => {
   return apiClient.get(`/api/MenuItem/search?${params.toString()}`)
 }
 
+const reorder = async (categoryId, menuItemIds) => {
+  return apiClient.post(`/api/MenuItem/category/${categoryId}/reorder`, {
+    menuItemIds,
+  })
+}
+
 const menuItemService = {
   getAll,
   getByCategory,
@@ -52,6 +58,7 @@ const menuItemService = {
   remove,
   toggleAvailability,
   search,
+  reorder,
 }
 
 export default menuItemService

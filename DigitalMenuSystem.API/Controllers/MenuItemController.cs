@@ -218,5 +218,33 @@ namespace DigitalMenuSystem.API.Controllers
                 return StatusCode(500, new { message = "Error searching menu items" });
             }
         }
+
+        /// <summary>
+        /// Reorder menu items within a category
+        /// </summary>
+        /// <param name="categoryId">Category ID</param>
+        /// <param name="reorderDto">Array of menu item IDs in new order</param>
+        /// <returns>Success status</returns>
+        [HttpPost("category/{categoryId}/reorder")]
+        [Authorize]
+        public async Task<IActionResult> ReorderMenuItems(int categoryId, [FromBody] ReorderMenuItemsDto reorderDto)
+        {
+            try
+            {
+                var success = await _itemService.ReorderMenuItemsAsync(categoryId, reorderDto.MenuItemIds);
+
+                if (!success)
+                {
+                    return BadRequest(new { message = "Failed to reorder menu items" });
+                }
+
+                return Ok(new { message = "Menu items reordered successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error reordering menu items for category {categoryId}");
+                return StatusCode(500, new { message = "Error reordering menu items" });
+            }
+        }
     }
 }

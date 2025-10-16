@@ -34,12 +34,20 @@ const update = async (id, payload) => apiClient.put(
 
 const remove = async (id) => apiClient.delete(`/api/MenuCategory/${id}`)
 
+const reorder = async (categoryIds) => {
+  const restaurantId = getRestaurantId()
+  return apiClient.post(`/api/MenuCategory/restaurant/${restaurantId}/reorder`, {
+    categoryIds,
+  })
+}
+
 const menuCategoryService = {
   getAll,
   getById,
   create,
   update,
   remove,
+  reorder,
 }
 
 export default menuCategoryService

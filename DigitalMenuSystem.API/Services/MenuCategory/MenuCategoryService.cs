@@ -163,5 +163,36 @@ namespace DigitalMenuSystem.API.Services.Menu
             return await _context.MenuCategories
                 .AnyAsync(c => c.Id == categoryId);
         }
+
+        public async Task<bool> ReorderCategoriesAsync(int restaurantId, int[] categoryIds)
+        {
+            // Validate that all categories belong to the restaurant
+            var categories = await _context.MenuCategories
+                .Where(c => c.RestaurantId == restaurantId && categoryIds.Contains(c.Id))
+                .ToListAsync();
+
+            if (categories.Count != categoryIds.Length)
+            {
+                _logger.LogWarning($"Some category IDs don't belong to restaurant {restaurantId}");
+                return false;
+            }
+
+            // Update display order based on array position
+            for (int i = 0; i < categoryIds.Length; i++)
+            {
+                var category = categories.FirstOrDefault(c => c.Id == categoryIds[i]);
+                if (category != null)
+                {
+                    category.DisplayOrder = i;
+                    category.UpdatedAt = DateTime.UtcNow;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"Reordered {categories.Count} categories for restaurant {restaurantId}");
+
+            return true;
+        }
     }
 }

@@ -147,7 +147,7 @@ namespace DigitalMenuSystem.API.Controllers
             try
             {
                 var success = await _categoryService.DeleteCategoryAsync(id);
-                
+
                 if (!success)
                 {
                     return NotFound(new { message = $"Category with ID {id} not found" });
@@ -159,6 +159,34 @@ namespace DigitalMenuSystem.API.Controllers
             {
                 _logger.LogError(ex, $"Error deleting category {id}");
                 return StatusCode(500, new { message = "Error deleting category" });
+            }
+        }
+
+        /// <summary>
+        /// Reorder categories
+        /// </summary>
+        /// <param name="restaurantId">Restaurant ID</param>
+        /// <param name="reorderDto">Array of category IDs in new order</param>
+        /// <returns>Success status</returns>
+        [HttpPost("restaurant/{restaurantId}/reorder")]
+        [Authorize]
+        public async Task<IActionResult> ReorderCategories(int restaurantId, [FromBody] ReorderCategoriesDto reorderDto)
+        {
+            try
+            {
+                var success = await _categoryService.ReorderCategoriesAsync(restaurantId, reorderDto.CategoryIds);
+
+                if (!success)
+                {
+                    return BadRequest(new { message = "Failed to reorder categories" });
+                }
+
+                return Ok(new { message = "Categories reordered successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error reordering categories for restaurant {restaurantId}");
+                return StatusCode(500, new { message = "Error reordering categories" });
             }
         }
     }

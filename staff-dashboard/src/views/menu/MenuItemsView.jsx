@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import clsx from 'clsx'
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import useMenuItemsViewModel from '../../viewmodels/menu/useMenuItemsViewModel.js'
 import ManageAddOnsModal from '../../components/ManageAddOnsModal.jsx'
 
@@ -26,10 +27,35 @@ const MenuItemsView = () => {
     handleSubmit,
     handleDelete,
     handleToggleAvailability,
+    handleReorder,
     reload,
   } = useMenuItemsViewModel()
 
   const [addOnsModalItem, setAddOnsModalItem] = useState(null)
+
+  // Group items by category
+  const itemsByCategory = useMemo(() => {
+    const grouped = {}
+    items.forEach(item => {
+      if (!grouped[item.categoryId]) {
+        grouped[item.categoryId] = {
+          categoryName: item.categoryName,
+          items: []
+        }
+      }
+      grouped[item.categoryId].items.push(item)
+    })
+    return grouped
+  }, [items])
+
+  const onDragEnd = (result) => {
+    if (!result.destination) {
+      return
+    }
+
+    const categoryId = parseInt(result.source.droppableId.replace('category-', ''))
+    handleReorder(categoryId, result.source.index, result.destination.index)
+  }
 
   return (
     <div className="space-y-6">
@@ -107,20 +133,47 @@ const MenuItemsView = () => {
               : 'No menu items yet. Click "New Item" to create the first one.'}
           </div>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {items.map((item) => {
-              const itemAddOns = Array.isArray(item?.addOns)
-                ? item.addOns
-                : Array.isArray(item?.AddOns)
-                  ? item.AddOns
-                  : []
+          <DragDropContext onDragEnd={onDragEnd}>
+            <div className="space-y-8">
+              {Object.entries(itemsByCategory).map(([categoryId, { categoryName, items: categoryItems }]) => (
+                <div key={categoryId} className="space-y-4">
+                  {/* Category Header */}
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-lg font-semibold text-white">{categoryName}</h3>
+                    <span className="text-xs text-slate-400 bg-white/5 px-2 py-1 rounded">
+                      {categoryItems.length} item{categoryItems.length !== 1 ? 's' : ''}
+                    </span>
+                  </div>
 
-              return (
-                <article
-                  className="flex h-full flex-col rounded-2xl border border-white/10 bg-sidebar/70 shadow-lg transition hover:border-primary/40 hover:shadow-primary/10 overflow-hidden"
-                  key={item.id}
-                >
-                  <div className="flex flex-col h-full">
+                  {/* Droppable area for this category */}
+                  <Droppable droppableId={`category-${categoryId}`} direction="horizontal">
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        className="grid gap-4 md:grid-cols-2 xl:grid-cols-3"
+                      >
+                        {categoryItems.map((item, index) => {
+                          const itemAddOns = Array.isArray(item?.addOns)
+                            ? item.addOns
+                            : Array.isArray(item?.AddOns)
+                              ? item.AddOns
+                              : []
+
+                          return (
+                            <Draggable key={item.id} draggableId={String(item.id)} index={index}>
+                              {(provided, snapshot) => (
+                                <article
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  className={clsx(
+                                    "flex h-full flex-col rounded-2xl border bg-sidebar/70 shadow-lg transition overflow-hidden",
+                                    snapshot.isDragging
+                                      ? "border-primary/60 shadow-primary/30 ring-2 ring-primary/40"
+                                      : "border-white/10 hover:border-primary/40 hover:shadow-primary/10"
+                                  )}
+                                >
+                                  <div className="flex flex-col h-full">
                     {/* Image container with aspect ratio */}
                     {item.imageUrl ? (
                       <div className="w-full aspect-[16/10] bg-surface/50 overflow-hidden">
@@ -152,6 +205,33 @@ const MenuItemsView = () => {
 
                     {/* Content section */}
                     <div className="flex flex-col flex-1 p-4 sm:p-5">
+                      {/* Drag handle and position */}
+                      <div className="flex items-center justify-between mb-3 pb-2 border-b border-white/10">
+                        <div
+                          {...provided.dragHandleProps}
+                          className="flex items-center gap-2 cursor-grab active:cursor-grabbing text-slate-400 hover:text-primary transition"
+                        >
+                          <svg
+                            className="h-5 w-5"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M3 7h18M3 12h18M3 17h18"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                          <span className="text-xs font-medium">Drag to reorder</span>
+                        </div>
+                        <span className="text-xs font-semibold text-primary bg-primary/10 px-2 py-1 rounded">
+                          Position #{index + 1}
+                        </span>
+                      </div>
+
                     <div className="flex-1 space-y-3">
                       <div className="flex items-start justify-between gap-2">
                         <h3 className="text-base sm:text-lg font-semibold text-white line-clamp-2">{item.name}</h3>
@@ -308,10 +388,19 @@ const MenuItemsView = () => {
                     </div>
                   </div>
                   </div>
-                </article>
-              )
-            })}
-          </div>
+                                </article>
+                              )}
+                            </Draggable>
+                          )
+                        })}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </div>
+              ))}
+            </div>
+          </DragDropContext>
         )}
       </section>
 

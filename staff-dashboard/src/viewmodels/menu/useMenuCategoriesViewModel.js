@@ -159,6 +159,34 @@ const useMenuCategoriesViewModel = () => {
     }
   }
 
+  const handleReorder = async (sourceIndex, destinationIndex) => {
+    if (sourceIndex === destinationIndex) {
+      return
+    }
+
+    // Create a backup of the current categories
+    const previousCategories = [...categories]
+
+    // Optimistic update: reorder locally
+    const reordered = Array.from(filteredCategories)
+    const [movedItem] = reordered.splice(sourceIndex, 1)
+    reordered.splice(destinationIndex, 0, movedItem)
+
+    // Update the categories state with the new order
+    setCategories(reordered)
+
+    try {
+      // Send the new order to the backend
+      const categoryIds = reordered.map((cat) => cat.id)
+      await menuCategoryService.reorder(categoryIds)
+      setSuccessMessage('Categories reordered successfully')
+    } catch (err) {
+      // Revert to the previous state on error
+      setCategories(previousCategories)
+      setError(err.message ?? 'Unable to reorder categories')
+    }
+  }
+
   const filteredCategories = useMemo(() => {
     const sorted = [...categories].sort((a, b) => a.displayOrder - b.displayOrder)
 
@@ -190,6 +218,7 @@ const useMenuCategoriesViewModel = () => {
     handleSubmit,
     handleDelete,
     handleToggleVisibility,
+    handleReorder,
     statusFilter,
     setStatusFilter,
     reload: loadCategories,
