@@ -1,0 +1,17 @@
+{
+  "name": "ordering-system",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:chrome": "playwright test --project=chromium",
+    "test:e2e:customer": "playwright test customer-menu.spec.js",
+    "test:e2e:staff": "playwright test staff-dashboard.spec.js",
+    "test:e2e:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1"
+  }
+}
