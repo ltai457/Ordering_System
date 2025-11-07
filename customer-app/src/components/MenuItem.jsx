@@ -108,7 +108,7 @@ const MenuItem = ({ item, category, onAddToCart }) => {
 
       <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
       {/* Item Image */}
-      <div className="relative h-48 bg-white">
+      <div className="relative h-36 lg:h-48 bg-white">
         {item.imageUrl ? (
           <img
             src={item.imageUrl}
@@ -147,38 +147,38 @@ const MenuItem = ({ item, category, onAddToCart }) => {
       </div>
 
       {/* Item Details */}
-      <div className="flex flex-col flex-1 p-4">
-        <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
+      <div className="flex flex-col flex-1 p-3 lg:p-4">
+        <h3 className="text-sm lg:text-lg font-bold text-gray-900 mb-1 lg:mb-2 line-clamp-2">
           {item.name}
         </h3>
 
         {item.description && (
-          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+          <p className="text-xs lg:text-sm text-gray-600 mb-2 lg:mb-3 line-clamp-2">
             {item.description}
           </p>
         )}
 
-        <div className="mt-auto space-y-3">
+        <div className="mt-auto space-y-2 lg:space-y-3">
           <div className="flex items-center justify-between">
-            <div className="text-xl font-bold text-orange-500">
+            <div className="text-base lg:text-xl font-bold text-orange-500">
               ${item.price.toFixed(2)}
             </div>
 
             {/* Quantity Selector */}
             {item.isAvailable && (
-              <div className="flex items-center gap-2 bg-gray-100 rounded-lg px-2 py-1">
+              <div className="flex items-center gap-1 lg:gap-2 bg-gray-100 rounded-lg px-1.5 lg:px-2 py-0.5 lg:py-1">
                 <button
                   onClick={decreaseQuantity}
-                  className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-900 font-bold text-xl"
+                  className="w-6 h-6 lg:w-8 lg:h-8 flex items-center justify-center text-gray-600 hover:text-gray-900 font-bold text-base lg:text-xl"
                 >
                   -
                 </button>
-                <span className="font-bold text-gray-900 w-8 text-center">
+                <span className="font-bold text-gray-900 w-6 lg:w-8 text-center text-sm lg:text-base">
                   {quantity}
                 </span>
                 <button
                   onClick={increaseQuantity}
-                  className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-900 font-bold text-xl"
+                  className="w-6 h-6 lg:w-8 lg:h-8 flex items-center justify-center text-gray-600 hover:text-gray-900 font-bold text-base lg:text-xl"
                 >
                   +
                 </button>
@@ -192,13 +192,13 @@ const MenuItem = ({ item, category, onAddToCart }) => {
               <div className="flex gap-2">
                 <button
                   onClick={handleCustomize}
-                  className="flex-1 py-2.5 rounded-lg font-semibold bg-white border-2 border-orange-500 text-orange-500 hover:bg-orange-50 transition-all"
+                  className="flex-1 py-2 px-2 rounded-lg text-xs lg:text-sm font-semibold bg-white border-2 border-orange-500 text-orange-500 hover:bg-orange-50 transition-all"
                 >
                   Customize
                 </button>
                 <button
                   onClick={handleQuickAdd}
-                  className="flex-1 py-2.5 rounded-lg font-semibold bg-orange-500 hover:bg-orange-600 text-white shadow-md hover:shadow-lg transition-all"
+                  className="flex-1 py-2 px-2 rounded-lg text-xs lg:text-sm font-semibold bg-orange-500 hover:bg-orange-600 text-white shadow-md hover:shadow-lg transition-all"
                 >
                   Quick Add
                 </button>
@@ -206,7 +206,7 @@ const MenuItem = ({ item, category, onAddToCart }) => {
             ) : (
               <button
                 onClick={handleQuickAdd}
-                className="w-full py-2.5 rounded-lg font-semibold bg-orange-500 hover:bg-orange-600 text-white shadow-md hover:shadow-lg transition-all"
+                className="w-full py-2 px-2 rounded-lg text-xs lg:text-sm font-semibold bg-orange-500 hover:bg-orange-600 text-white shadow-md hover:shadow-lg transition-all"
               >
                 Add to Cart
               </button>
@@ -221,7 +221,7 @@ const MenuItem = ({ item, category, onAddToCart }) => {
           )}
 
           {showConfirmation && item.isAvailable && (
-            <div className="rounded-lg bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700 shadow-sm">
+            <div className="rounded-lg bg-emerald-50 px-2 lg:px-3 py-1.5 lg:py-2 text-xs lg:text-sm font-semibold text-emerald-700 shadow-sm">
               Added {lastQuantityAdded} × {item.name} to cart
             </div>
           )}

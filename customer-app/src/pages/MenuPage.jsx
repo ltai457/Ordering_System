@@ -84,7 +84,7 @@ const MenuPage = () => {
         return
       }
 
-      const headerHeight = 140 + 56 + 100 // header + category nav + offset
+      const headerHeight = 110 + 56 + 50 // header + category nav + offset (mobile-optimized)
       const scrollPosition = window.scrollY + headerHeight
 
       // Find which category section is currently visible
@@ -133,7 +133,7 @@ const MenuPage = () => {
     // Scroll to the category section
     const section = categorySectionsRef.current[categoryId]
     if (section) {
-      const headerHeight = 140 + 56 // header + category nav height
+      const headerHeight = 110 + 56 // header + category nav height (mobile-optimized)
       const offsetTop = section.offsetTop - headerHeight
       window.scrollTo({
         top: offsetTop,
@@ -183,54 +183,28 @@ const MenuPage = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-3">
-          {/* Logo and Restaurant Name - Better mobile layout */}
-          <div className="flex items-center justify-center mb-3">
+        <div className="max-w-7xl mx-auto px-3 py-2 lg:px-4 lg:py-3">
+          {/* Logo and Restaurant Name - Compact mobile layout */}
+          <div className="flex items-center justify-between mb-2 lg:mb-3">
             <div className="flex items-center gap-2">
               <img
                 src="/logo.png"
                 alt="Restaurant Logo"
-                className="w-10 h-10 sm:w-12 sm:h-12 object-contain flex-shrink-0"
+                className="w-8 h-8 lg:w-12 lg:h-12 object-contain flex-shrink-0"
               />
-              <h1 className="text-lg sm:text-2xl font-bold text-gray-900 whitespace-nowrap">
+              <h1 className="text-base lg:text-2xl font-bold text-gray-900 whitespace-nowrap">
                 ChangAn BBQ
               </h1>
             </div>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            {tableInfo ? (
-              <>
-                <p className="text-center text-sm text-gray-500">
-                  You are ordering for <span className="font-semibold text-gray-700">Table {tableInfo.tableNumber}</span>
-                  {tableInfo.location ? ` • ${tableInfo.location}` : ''}
-                </p>
-                <button
-                  className="text-xs font-semibold text-orange-500 hover:text-orange-600"
-                  onClick={() => {
-                    setTableInfo(null)
-                    setTableNumberInput('')
-                  }}
-                  type="button"
-                >
-                  Change table
-                </button>
-              </>
-            ) : (
-              <p className="text-center text-sm text-gray-500">
-                Enter your table number to make sure we deliver food to the right spot.
-              </p>
-            )}
-          </div>
 
-          {/* Cart Button - Absolute positioned on right */}
-          <div className="absolute top-3 right-3 sm:top-4 sm:right-4">
+            {/* Cart Button - Mobile optimized */}
             <button
               onClick={() => navigate('/cart')}
-              className="relative bg-orange-500 hover:bg-orange-600 text-white font-semibold px-3 py-2 sm:px-5 sm:py-2.5 rounded-lg transition-colors shadow-md"
+              className="relative bg-orange-500 hover:bg-orange-600 text-white font-semibold px-3 py-2 lg:px-5 lg:py-2.5 rounded-lg transition-colors shadow-md"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 lg:gap-2">
                 <svg
-                  className="w-5 h-5"
+                  className="w-4 h-4 lg:w-5 lg:h-5"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
@@ -242,22 +216,54 @@ const MenuPage = () => {
                     strokeLinejoin="round"
                   />
                 </svg>
-                <span>Cart</span>
+                <span className="text-sm lg:text-base">Cart</span>
               </div>
               {/* Cart Badge */}
               {getTotalItems() > 0 && (
-                <span className="absolute -top-2 -right-2 flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold text-white bg-red-500 rounded-full">
+                <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-white bg-red-500 rounded-full">
                   {getTotalItems()}
                 </span>
               )}
             </button>
           </div>
 
-          {/* Search Box */}
+          {/* Banner - Add your banner content here */}
+          <div className="mb-2 py-2 px-3 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg text-center">
+            <p className="text-white text-xs lg:text-sm font-semibold">
+              🎉 Special Offer: 20% off all BBQ items today! 🎉
+            </p>
+          </div>
+
+          {/* Table Info - Stylish Design */}
+          {tableInfo && (
+            <div className="mb-2 flex items-center justify-center gap-2">
+              <div className="flex items-center gap-2 bg-gradient-to-r from-orange-100 to-orange-50 px-4 py-2 rounded-full border-2 border-orange-300 shadow-sm">
+                <div className="bg-orange-500 text-white w-7 h-7 lg:w-8 lg:h-8 rounded-full flex items-center justify-center font-bold text-xs lg:text-sm">
+                  {tableInfo.tableNumber}
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] lg:text-xs text-orange-600 font-medium leading-tight">Your Table</span>
+                  <span className="text-xs lg:text-sm text-gray-700 font-bold leading-tight">#{tableInfo.tableNumber}</span>
+                </div>
+              </div>
+              <button
+                className="bg-white text-orange-500 hover:bg-orange-50 px-3 py-2 rounded-full text-xs lg:text-sm font-semibold border-2 border-orange-300 transition-all active:scale-95"
+                onClick={() => {
+                  setTableInfo(null)
+                  setTableNumberInput('')
+                }}
+                type="button"
+              >
+                Change
+              </button>
+            </div>
+          )}
+
+          {/* Search Box - Compact */}
           <div className="relative w-full max-w-2xl mx-auto">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
               <svg
-                className="w-5 h-5 text-gray-400"
+                className="w-4 h-4 lg:w-5 lg:h-5 text-gray-400"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
@@ -275,7 +281,7 @@ const MenuPage = () => {
               value={searchTerm}
               onChange={handleSearch}
               placeholder="Search menu..."
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 block w-full pl-12 pr-4 py-3 transition-all"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm lg:text-base rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 block w-full pl-9 lg:pl-12 pr-4 py-2 lg:py-3 transition-all"
             />
             {searchTerm && (
               <button
@@ -283,10 +289,10 @@ const MenuPage = () => {
                   setSearchTerm('')
                   setFilteredItems([])
                 }}
-                className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 hover:text-gray-600"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
               >
                 <svg
-                  className="w-5 h-5"
+                  className="w-4 h-4 lg:w-5 lg:h-5"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
@@ -350,9 +356,9 @@ const MenuPage = () => {
         </div>
       ) : null}
 
-      {/* Category Navigation - Sticky */}
+      {/* Category Navigation - Sticky below header */}
       {!searchTerm && categories.length > 0 && (
-        <div className="sticky top-[140px] z-40">
+        <div className="sticky top-[120px] lg:top-[130px] z-40 bg-gray-50">
           <CategoryNav
             categories={categories}
             activeCategory={activeCategory}
@@ -362,7 +368,7 @@ const MenuPage = () => {
       )}
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-6">
+      <main className="max-w-7xl mx-auto px-3 py-4 lg:px-4 lg:py-6">
         {isLoading ? (
           <div className="text-center py-12">
             <div className="inline-block w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
@@ -400,7 +406,7 @@ const MenuPage = () => {
               </div>
             ) : (
               // Category Sections
-              <div className="space-y-10">
+              <div className="space-y-6 lg:space-y-10">
                 {categories.map((category) => {
                   const categoryItems = getItemsByCategory(category.id)
 
@@ -410,15 +416,15 @@ const MenuPage = () => {
                       ref={(el) => {
                         if (el) categorySectionsRef.current[category.id] = el
                       }}
-                      className="scroll-mt-48"
+                      className="scroll-mt-[156px] lg:scroll-mt-[176px]"
                     >
                       {/* Category Title */}
-                      <div className="mb-6">
-                        <h2 className="text-3xl font-bold text-gray-900 pb-3 border-b-2 border-orange-500">
+                      <div className="mb-4 lg:mb-6">
+                        <h2 className="text-xl lg:text-3xl font-bold text-gray-900 pb-2 lg:pb-3 border-b-2 border-orange-500">
                           {category.name}
                         </h2>
                         {category.description && (
-                          <p className="text-gray-600 mt-2">{category.description}</p>
+                          <p className="text-sm lg:text-base text-gray-600 mt-2">{category.description}</p>
                         )}
                       </div>
 
