@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://192.168.88.6:5100/api'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5100/api'
 
 const apiClient = {
   async get(endpoint) {
