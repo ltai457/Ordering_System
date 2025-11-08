@@ -13,8 +13,14 @@ namespace DigitalMenuSystem.API.DTOs.Order
         public string Status { get; set; } = string.Empty;
         public decimal TotalAmount { get; set; }
         public string? Notes { get; set; }
+        public int CurrentBatch { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public DateTime? AcceptedAt { get; set; }
+        public DateTime? LastBatchAcceptedAt { get; set; }
+        public DateTime? PaidAt { get; set; }
+        public string? AcceptedBy { get; set; }
+        public string? PaidBy { get; set; }
         public List<OrderItemDto> OrderItems { get; set; } = new();
     }
 }

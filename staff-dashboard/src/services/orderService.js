@@ -32,12 +32,40 @@ const updateOrderStatus = async (id, status) => {
   return apiClient.patch(`/api/Order/${id}/status`, { status })
 }
 
+const acceptOrder = async (id, staffName = 'Till Staff') => {
+  return apiClient.post(`/api/Order/${id}/accept`, { staffName })
+}
+
+const markOrderAsPaid = async (id, staffName = 'Cashier') => {
+  return apiClient.post(`/api/Order/${id}/mark-paid`, { staffName })
+}
+
+const getPendingOrders = async () => {
+  const restaurantId = getRestaurantId()
+  return apiClient.get(`/api/Order/restaurant/${restaurantId}/pending`)
+}
+
+const getOrdersAwaitingPayment = async () => {
+  const restaurantId = getRestaurantId()
+  return apiClient.get(`/api/Order/restaurant/${restaurantId}/awaiting-payment`)
+}
+
+const getTodayPaidOrders = async () => {
+  const restaurantId = getRestaurantId()
+  return apiClient.get(`/api/Order/restaurant/${restaurantId}/today-paid`)
+}
+
 const orderService = {
   getAllOrders,
   getActiveOrders,
   getOrdersByStatus,
   getOrderById,
   updateOrderStatus,
+  acceptOrder,
+  markOrderAsPaid,
+  getPendingOrders,
+  getOrdersAwaitingPayment,
+  getTodayPaidOrders,
 }
 
 export default orderService

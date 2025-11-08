@@ -11,5 +11,8 @@ namespace DigitalMenuSystem.API.Services.Order
         Task<List<OrderDto>> GetOrdersByStatusAsync(int restaurantId, string status);
         Task<List<OrderDto>> GetActiveOrdersAsync(int restaurantId);
         Task<bool> UpdateOrderStatusAsync(int id, string status);
+        Task<bool> AcceptOrderAsync(int id, string staffName);
+        Task<bool> MarkOrderAsPaidAsync(int id, string staffName);
+        Task<List<OrderDto>> GetTodayPaidOrdersAsync(int restaurantId);
     }
 }
