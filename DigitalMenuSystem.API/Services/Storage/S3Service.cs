@@ -59,11 +59,11 @@ namespace DigitalMenuSystem.API.Services.Storage
 
                 if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    // Construct public URL
-                    var imageUrl = $"https://{_bucketName}.s3.{_region}.amazonaws.com/{key}";
-                    
+                    // Construct public URL for Digital Ocean Spaces
+                    var imageUrl = $"https://{_bucketName}.{_region}.digitaloceanspaces.com/{key}";
+
                     _logger.LogInformation($"Uploaded image: {fileName} to {folder}");
-                    
+
                     return imageUrl;
                 }
                 else
