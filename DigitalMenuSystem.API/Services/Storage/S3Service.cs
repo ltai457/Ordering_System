@@ -51,16 +51,16 @@ namespace DigitalMenuSystem.API.Services.Storage
                     BucketName = _bucketName,
                     Key = key,
                     InputStream = stream,
-                    ContentType = file.ContentType,
-                    CannedACL = S3CannedACL.PublicRead // Make image publicly accessible
+                    ContentType = file.ContentType
+                    // Don't set CannedACL - Digital Ocean Spaces uses CDN for public access
                 };
 
                 var response = await _s3Client.PutObjectAsync(uploadRequest);
 
                 if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    // Construct public URL for Digital Ocean Spaces
-                    var imageUrl = $"https://{_bucketName}.{_region}.digitaloceanspaces.com/{key}";
+                    // Construct public CDN URL for Digital Ocean Spaces
+                    var imageUrl = $"https://{_bucketName}.{_region}.cdn.digitaloceanspaces.com/{key}";
 
                     _logger.LogInformation($"Uploaded image: {fileName} to {folder}");
 
