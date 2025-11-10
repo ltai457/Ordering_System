@@ -478,6 +478,54 @@ const MenuItemsView = () => {
                 ) : null}
               </div>
 
+              {/* Multi-language Names */}
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div>
+                  <label className="block text-sm font-medium text-slate-300" htmlFor="item-name-kh">
+                    Name (Khmer)
+                  </label>
+                  <input
+                    className="mt-1 w-full rounded-lg border border-white/10 bg-surface px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    id="item-name-kh"
+                    name="nameKH"
+                    onChange={handleFormChange('nameKH')}
+                    placeholder="ឈ្មោះខ្មែរ"
+                    type="text"
+                    value={form.nameKH || ''}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300" htmlFor="item-name-en">
+                    Name (English)
+                  </label>
+                  <input
+                    className="mt-1 w-full rounded-lg border border-white/10 bg-surface px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    id="item-name-en"
+                    name="nameEN"
+                    onChange={handleFormChange('nameEN')}
+                    placeholder="English name"
+                    type="text"
+                    value={form.nameEN || ''}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300" htmlFor="item-name-cn">
+                    Name (Chinese)
+                  </label>
+                  <input
+                    className="mt-1 w-full rounded-lg border border-white/10 bg-surface px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    id="item-name-cn"
+                    name="nameCN"
+                    onChange={handleFormChange('nameCN')}
+                    placeholder="中文名称"
+                    type="text"
+                    value={form.nameCN || ''}
+                  />
+                </div>
+              </div>
+
               <div>
                 <label
                   className="block text-sm font-medium text-slate-300"
@@ -501,7 +549,7 @@ const MenuItemsView = () => {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className="block text-sm font-medium text-slate-300" htmlFor="item-price">
-                    Price *
+                    Price (Legacy) *
                   </label>
                   <div className="relative mt-1">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">$</span>
@@ -537,6 +585,47 @@ const MenuItemsView = () => {
                   {formErrors.dietaryInfo ? (
                     <p className="mt-1 text-xs text-red-300">{formErrors.dietaryInfo}</p>
                   ) : null}
+                </div>
+              </div>
+
+              {/* Dual Currency Prices */}
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="block text-sm font-medium text-slate-300" htmlFor="item-price-usd">
+                    Price (USD)
+                  </label>
+                  <div className="relative mt-1">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">$</span>
+                    <input
+                      className="w-full rounded-lg border border-white/10 bg-surface pl-8 pr-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                      id="item-price-usd"
+                      name="priceUSD"
+                      onChange={handleFormChange('priceUSD')}
+                      placeholder="0.00"
+                      step="0.01"
+                      type="number"
+                      value={form.priceUSD || ''}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300" htmlFor="item-price-khr">
+                    Price (KHR)
+                  </label>
+                  <div className="relative mt-1">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">៛</span>
+                    <input
+                      className="w-full rounded-lg border border-white/10 bg-surface pl-8 pr-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                      id="item-price-khr"
+                      name="priceKHR"
+                      onChange={handleFormChange('priceKHR')}
+                      placeholder="0.00"
+                      step="0.01"
+                      type="number"
+                      value={form.priceKHR || ''}
+                    />
+                  </div>
                 </div>
               </div>
 

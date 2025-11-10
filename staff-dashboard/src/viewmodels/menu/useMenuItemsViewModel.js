@@ -113,8 +113,13 @@ const useMenuItemsViewModel = () => {
       const payload = {
         categoryId: parseInt(form.categoryId),
         name: form.name,
+        nameKH: form.nameKH || null,
+        nameEN: form.nameEN || null,
+        nameCN: form.nameCN || null,
         description: form.description || null,
         price: parseFloat(form.price),
+        priceUSD: form.priceUSD ? parseFloat(form.priceUSD) : 0,
+        priceKHR: form.priceKHR ? parseFloat(form.priceKHR) : 0,
         imageUrl: imageUrl || null,
         dietaryInfo: form.dietaryInfo || null,
         displayOrder: form.displayOrder,
