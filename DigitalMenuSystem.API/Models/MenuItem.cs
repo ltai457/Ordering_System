@@ -9,13 +9,30 @@ namespace DigitalMenuSystem.API.Models
         
         [Required]
         [StringLength(200)]
-        public string Name { get; set; } = string.Empty; // e.g., "Margherita Pizza"
+        public string Name { get; set; } = string.Empty; // Default/primary name (kept for backward compatibility)
+        
+        // Multi-language names
+        [StringLength(200)]
+        public string? NameKH { get; set; } // Khmer name
+        
+        [StringLength(200)]
+        public string? NameEN { get; set; } // English name
+        
+        [StringLength(200)]
+        public string? NameCN { get; set; } // Chinese name
         
         public string? Description { get; set; }
         
         [Required]
         [Column(TypeName = "decimal(10,2)")]
-        public decimal Price { get; set; }
+        public decimal Price { get; set; } // Default/primary price (kept for backward compatibility)
+        
+        // Dual currency prices
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal PriceUSD { get; set; } // Price in US Dollars
+        
+        [Column(TypeName = "decimal(12,2)")]
+        public decimal PriceKHR { get; set; } // Price in Cambodian Riel
         
         public string? ImageUrl { get; set; } // S3 URL for food image
         
