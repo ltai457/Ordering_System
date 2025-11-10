@@ -52,7 +52,7 @@ namespace DigitalMenuSystem.API.Services.Storage
                     Key = key,
                     InputStream = stream,
                     ContentType = file.ContentType,
-                    /* CannedACL = S3CannedACL.PublicRead // Make image publicly accessible */
+                    CannedACL = S3CannedACL.PublicRead // Make image publicly accessible
                 };
 
                 var response = await _s3Client.PutObjectAsync(uploadRequest);
