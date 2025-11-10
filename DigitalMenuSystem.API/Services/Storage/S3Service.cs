@@ -51,8 +51,7 @@ namespace DigitalMenuSystem.API.Services.Storage
                     BucketName = _bucketName,
                     Key = key,
                     InputStream = stream,
-                    ContentType = file.ContentType,
-                    CannedACL = S3CannedACL.PublicRead // Set public read access for each uploaded image
+                    ContentType = file.ContentType
                 };
 
                 var response = await _s3Client.PutObjectAsync(uploadRequest);
