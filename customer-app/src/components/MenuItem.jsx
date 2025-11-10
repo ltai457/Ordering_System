@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import ItemCustomizationModal from './ItemCustomizationModal'
+import { useLanguage } from '../contexts/LanguageContext'
 
 // Categories that should NOT have customization options
 const NON_CUSTOMIZABLE_CATEGORIES = [
@@ -12,11 +13,15 @@ const NON_CUSTOMIZABLE_CATEGORIES = [
 ]
 
 const MenuItem = ({ item, category, onAddToCart }) => {
+  const { getLocalizedName, formatPrice, getLocalizedPrice } = useLanguage()
   const [quantity, setQuantity] = useState(1)
   const [showConfirmation, setShowConfirmation] = useState(false)
   const [showCustomizationModal, setShowCustomizationModal] = useState(false)
   const [lastQuantityAdded, setLastQuantityAdded] = useState(0)
   const confirmationTimeout = useRef(null)
+
+  const displayName = getLocalizedName(item)
+  const displayPrice = getLocalizedPrice(item)
 
   const itemAddOns = (
     Array.isArray(item?.addOns)
@@ -112,7 +117,7 @@ const MenuItem = ({ item, category, onAddToCart }) => {
         {item.imageUrl ? (
           <img
             src={item.imageUrl}
-            alt={item.name}
+            alt={displayName}
             className="w-full h-full object-contain"
             onError={(e) => {
               e.target.src = 'https://via.placeholder.com/400x300?text=No+Image'
@@ -149,7 +154,7 @@ const MenuItem = ({ item, category, onAddToCart }) => {
       {/* Item Details */}
       <div className="flex flex-col flex-1 p-3 lg:p-4">
         <h3 className="text-sm lg:text-lg font-bold text-gray-900 mb-1 lg:mb-2 line-clamp-2">
-          {item.name}
+          {displayName}
         </h3>
 
         {item.description && (
@@ -161,7 +166,7 @@ const MenuItem = ({ item, category, onAddToCart }) => {
         <div className="mt-auto space-y-2 lg:space-y-3">
           <div className="flex items-center justify-between">
             <div className="text-base lg:text-xl font-bold text-orange-500">
-              ${item.price.toFixed(2)}
+              {formatPrice(displayPrice)}
             </div>
 
             {/* Quantity Selector */}
@@ -222,7 +227,7 @@ const MenuItem = ({ item, category, onAddToCart }) => {
 
           {showConfirmation && item.isAvailable && (
             <div className="rounded-lg bg-emerald-50 px-2 lg:px-3 py-1.5 lg:py-2 text-xs lg:text-sm font-semibold text-emerald-700 shadow-sm">
-              Added {lastQuantityAdded} × {item.name} to cart
+              Added {lastQuantityAdded} × {displayName} to cart
             </div>
           )}
         </div>
