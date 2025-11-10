@@ -51,8 +51,8 @@ namespace DigitalMenuSystem.API.Services.Storage
                     BucketName = _bucketName,
                     Key = key,
                     InputStream = stream,
-                    ContentType = file.ContentType
-                    // Don't set CannedACL - Digital Ocean Spaces uses CDN for public access
+                    ContentType = file.ContentType,
+                    CannedACL = S3CannedACL.PublicRead // Set public read access for each uploaded image
                 };
 
                 var response = await _s3Client.PutObjectAsync(uploadRequest);
