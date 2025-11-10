@@ -8,6 +8,8 @@ import MenuItemsView from '../views/menu/MenuItemsView.jsx'
 import AddOnLibraryView from '../views/addon-library/AddOnLibraryView.jsx'
 import OrdersView from '../views/orders/OrdersView.jsx'
 import KitchenView from '../views/kitchen/KitchenView.jsx'
+import TillView from '../views/till/TillView.jsx'
+import CashierView from '../views/cashier/CashierView.jsx'
 import UserManagementView from '../views/users/UserManagementView.jsx'
 import TablesView from '../views/tables/TablesView.jsx'
 
@@ -25,6 +27,8 @@ const App = () => (
         <Route path="/menu/addon-library" element={<AddOnLibraryView />} />
         <Route path="/orders" element={<OrdersView />} />
         <Route path="/kitchen" element={<KitchenView />} />
+        <Route path="/till" element={<TillView />} />
+        <Route path="/cashier" element={<CashierView />} />
         <Route path="/tables" element={<TablesView />} />
         <Route path="/users" element={<UserManagementView />} />
       </Route>

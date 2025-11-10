@@ -29,26 +29,14 @@ const OrdersView = () => {
     }
   }
 
-  const handleStatusChange = async (orderId, newStatus) => {
-    try {
-      await orderService.updateOrderStatus(orderId, newStatus)
-      await loadOrders()
-    } catch (err) {
-      alert(err.message || 'Failed to update order status')
-    }
-  }
-
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case 'pending':
-      case 'received':
         return 'bg-yellow-500/10 text-yellow-200 border-yellow-500/30'
-      case 'preparing':
+      case 'accepted':
         return 'bg-blue-500/10 text-blue-200 border-blue-500/30'
-      case 'ready':
+      case 'paid':
         return 'bg-green-500/10 text-green-200 border-green-500/30'
-      case 'served':
-        return 'bg-slate-600/20 text-slate-400 border-slate-600/30'
       case 'cancelled':
         return 'bg-red-500/10 text-red-200 border-red-500/30'
       default:
@@ -56,15 +44,14 @@ const OrdersView = () => {
     }
   }
 
-  const getNextStatus = (currentStatus) => {
-    switch (currentStatus?.toLowerCase()) {
+  const getStatusMessage = (status) => {
+    switch (status?.toLowerCase()) {
       case 'pending':
-      case 'received':
-        return 'Preparing'
-      case 'preparing':
-        return 'Ready'
-      case 'ready':
-        return 'Served'
+        return 'Go to Till Management to accept this order'
+      case 'accepted':
+        return 'Go to Cashier Station to process payment'
+      case 'paid':
+        return 'Order completed'
       default:
         return null
     }
@@ -233,13 +220,12 @@ const OrdersView = () => {
                 </div>
               </div>
 
-              {getNextStatus(order.status) && (
-                <button
-                  onClick={() => handleStatusChange(order.id, getNextStatus(order.status))}
-                  className="w-full rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary/90"
-                >
-                  Mark as {getNextStatus(order.status)}
-                </button>
+              {getStatusMessage(order.status) && (
+                <div className="text-center py-2 px-3 rounded-lg bg-white/5 border border-white/10">
+                  <p className="text-xs text-slate-400">
+                    {getStatusMessage(order.status)}
+                  </p>
+                </div>
               )}
             </div>
           ))}

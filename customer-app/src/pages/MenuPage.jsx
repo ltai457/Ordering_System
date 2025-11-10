@@ -358,7 +358,7 @@ const MenuPage = () => {
 
       {/* Category Navigation - Sticky below header */}
       {!searchTerm && categories.length > 0 && (
-        <div className="sticky top-[120px] lg:top-[130px] z-40 bg-gray-50">
+        <div className="sticky top-[110px] lg:top-[130px] z-40 bg-gray-50">
           <CategoryNav
             categories={categories}
             activeCategory={activeCategory}

@@ -19,9 +19,11 @@ namespace DigitalMenuSystem.API.Models
         
         [Column(TypeName = "decimal(10,2)")]
         public decimal UnitPrice { get; set; } // Price at time of order (in case menu price changes later)
-        
+
         public string? SpecialInstructions { get; set; } // e.g., "No onions", "Extra spicy"
-        
+
+        public int BatchNumber { get; set; } = 1; // Track which batch this item belongs to (for kitchen receipts)
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }
