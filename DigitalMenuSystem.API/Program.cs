@@ -71,7 +71,7 @@ var connectionString = $"Host={Environment.GetEnvironmentVariable("DB_HOST")};" 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-// Configure AWS S3
+// Configure Digital Ocean Spaces (S3-compatible)
 var awsAccessKey = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY");
 var awsSecretKey = Environment.GetEnvironmentVariable("AWS_SECRET_KEY");
 var awsRegion = Environment.GetEnvironmentVariable("AWS_REGION");
@@ -79,7 +79,8 @@ var awsRegion = Environment.GetEnvironmentVariable("AWS_REGION");
 var awsCredentials = new BasicAWSCredentials(awsAccessKey, awsSecretKey);
 var s3Config = new AmazonS3Config
 {
-    RegionEndpoint = RegionEndpoint.GetBySystemName(awsRegion)
+    ServiceURL = $"https://{awsRegion}.digitaloceanspaces.com",
+    ForcePathStyle = false // Digital Ocean Spaces uses virtual-hosted-style URLs
 };
 
 builder.Services.AddSingleton<IAmazonS3>(new AmazonS3Client(awsCredentials, s3Config));
