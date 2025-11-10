@@ -264,11 +264,22 @@ namespace DigitalMenuSystem.API.Services.Menu
 
         public async Task<bool> DeleteItemAsync(int itemId)
         {
-            var item = await _context.MenuItems.FindAsync(itemId);
-            
+            var item = await _context.MenuItems
+                .Include(i => i.OrderItems)
+                .FirstOrDefaultAsync(i => i.Id == itemId);
+
             if (item == null)
             {
                 return false;
+            }
+
+            // Check if the menu item has been ordered
+            if (item.OrderItems.Any())
+            {
+                throw new InvalidOperationException(
+                    $"Cannot delete menu item '{item.Name}' because it has been included in {item.OrderItems.Count} order(s). " +
+                    "Mark it as unavailable instead to prevent future orders."
+                );
             }
 
             _context.MenuItems.Remove(item);
