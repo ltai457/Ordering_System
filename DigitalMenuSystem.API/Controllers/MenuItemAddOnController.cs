@@ -29,7 +29,12 @@ public class MenuItemAddOnController : ControllerBase
                 Id = a.Id,
                 MenuItemId = a.MenuItemId,
                 Name = a.Name,
+                NameKH = a.NameKH,
+                NameEN = a.NameEN,
+                NameCN = a.NameCN,
                 Price = a.Price,
+                PriceUSD = a.PriceUSD,
+                PriceKHR = a.PriceKHR,
                 IsAvailable = a.IsAvailable,
                 DisplayOrder = a.DisplayOrder
             })
@@ -54,7 +59,12 @@ public class MenuItemAddOnController : ControllerBase
             Id = addOn.Id,
             MenuItemId = addOn.MenuItemId,
             Name = addOn.Name,
+            NameKH = addOn.NameKH,
+            NameEN = addOn.NameEN,
+            NameCN = addOn.NameCN,
             Price = addOn.Price,
+            PriceUSD = addOn.PriceUSD,
+            PriceKHR = addOn.PriceKHR,
             IsAvailable = addOn.IsAvailable,
             DisplayOrder = addOn.DisplayOrder
         });
@@ -75,7 +85,12 @@ public class MenuItemAddOnController : ControllerBase
         {
             MenuItemId = menuItemId,
             Name = dto.Name,
+            NameKH = dto.NameKH,
+            NameEN = dto.NameEN,
+            NameCN = dto.NameCN,
             Price = dto.Price,
+            PriceUSD = dto.PriceUSD,
+            PriceKHR = dto.PriceKHR,
             IsAvailable = dto.IsAvailable,
             DisplayOrder = dto.DisplayOrder,
             CreatedAt = DateTime.UtcNow,
@@ -90,7 +105,12 @@ public class MenuItemAddOnController : ControllerBase
             Id = addOn.Id,
             MenuItemId = addOn.MenuItemId,
             Name = addOn.Name,
+            NameKH = addOn.NameKH,
+            NameEN = addOn.NameEN,
+            NameCN = addOn.NameCN,
             Price = addOn.Price,
+            PriceUSD = addOn.PriceUSD,
+            PriceKHR = addOn.PriceKHR,
             IsAvailable = addOn.IsAvailable,
             DisplayOrder = addOn.DisplayOrder
         };
@@ -110,7 +130,12 @@ public class MenuItemAddOnController : ControllerBase
         }
 
         if (dto.Name != null) addOn.Name = dto.Name;
+        if (dto.NameKH != null) addOn.NameKH = dto.NameKH;
+        if (dto.NameEN != null) addOn.NameEN = dto.NameEN;
+        if (dto.NameCN != null) addOn.NameCN = dto.NameCN;
         if (dto.Price.HasValue) addOn.Price = dto.Price.Value;
+        if (dto.PriceUSD.HasValue) addOn.PriceUSD = dto.PriceUSD.Value;
+        if (dto.PriceKHR.HasValue) addOn.PriceKHR = dto.PriceKHR.Value;
         if (dto.IsAvailable.HasValue) addOn.IsAvailable = dto.IsAvailable.Value;
         if (dto.DisplayOrder.HasValue) addOn.DisplayOrder = dto.DisplayOrder.Value;
 

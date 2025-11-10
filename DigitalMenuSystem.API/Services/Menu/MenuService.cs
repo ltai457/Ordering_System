@@ -31,8 +31,13 @@ namespace DigitalMenuSystem.API.Services.Menu
                     CategoryId = i.CategoryId,
                     CategoryName = i.Category.Name,
                     Name = i.Name,
+                    NameKH = i.NameKH,
+                    NameEN = i.NameEN,
+                    NameCN = i.NameCN,
                     Description = i.Description,
                     Price = i.Price,
+                    PriceUSD = i.PriceUSD,
+                    PriceKHR = i.PriceKHR,
                     ImageUrl = i.ImageUrl,
                     DietaryInfo = i.DietaryInfo,
                     IsAvailable = i.IsAvailable,
@@ -44,7 +49,12 @@ namespace DigitalMenuSystem.API.Services.Menu
                         Id = a.Id,
                         MenuItemId = a.MenuItemId,
                         Name = a.Name,
+                        NameKH = a.NameKH,
+                        NameEN = a.NameEN,
+                        NameCN = a.NameCN,
                         Price = a.Price,
+                        PriceUSD = a.PriceUSD,
+                        PriceKHR = a.PriceKHR,
                         IsAvailable = a.IsAvailable,
                         DisplayOrder = a.DisplayOrder
                     }).ToList()
@@ -68,8 +78,13 @@ namespace DigitalMenuSystem.API.Services.Menu
                     CategoryId = i.CategoryId,
                     CategoryName = i.Category.Name,
                     Name = i.Name,
+                    NameKH = i.NameKH,
+                    NameEN = i.NameEN,
+                    NameCN = i.NameCN,
                     Description = i.Description,
                     Price = i.Price,
+                    PriceUSD = i.PriceUSD,
+                    PriceKHR = i.PriceKHR,
                     ImageUrl = i.ImageUrl,
                     DietaryInfo = i.DietaryInfo,
                     IsAvailable = i.IsAvailable,
@@ -81,7 +96,12 @@ namespace DigitalMenuSystem.API.Services.Menu
                         Id = a.Id,
                         MenuItemId = a.MenuItemId,
                         Name = a.Name,
+                        NameKH = a.NameKH,
+                        NameEN = a.NameEN,
+                        NameCN = a.NameCN,
                         Price = a.Price,
+                        PriceUSD = a.PriceUSD,
+                        PriceKHR = a.PriceKHR,
                         IsAvailable = a.IsAvailable,
                         DisplayOrder = a.DisplayOrder
                     }).ToList()
@@ -103,8 +123,13 @@ namespace DigitalMenuSystem.API.Services.Menu
                     CategoryId = i.CategoryId,
                     CategoryName = i.Category.Name,
                     Name = i.Name,
+                    NameKH = i.NameKH,
+                    NameEN = i.NameEN,
+                    NameCN = i.NameCN,
                     Description = i.Description,
                     Price = i.Price,
+                    PriceUSD = i.PriceUSD,
+                    PriceKHR = i.PriceKHR,
                     ImageUrl = i.ImageUrl,
                     DietaryInfo = i.DietaryInfo,
                     IsAvailable = i.IsAvailable,
@@ -116,7 +141,12 @@ namespace DigitalMenuSystem.API.Services.Menu
                         Id = a.Id,
                         MenuItemId = a.MenuItemId,
                         Name = a.Name,
+                        NameKH = a.NameKH,
+                        NameEN = a.NameEN,
+                        NameCN = a.NameCN,
                         Price = a.Price,
+                        PriceUSD = a.PriceUSD,
+                        PriceKHR = a.PriceKHR,
                         IsAvailable = a.IsAvailable,
                         DisplayOrder = a.DisplayOrder
                     }).ToList()
@@ -139,8 +169,13 @@ namespace DigitalMenuSystem.API.Services.Menu
             {
                 CategoryId = dto.CategoryId,
                 Name = dto.Name,
+                NameKH = dto.NameKH,
+                NameEN = dto.NameEN,
+                NameCN = dto.NameCN,
                 Description = dto.Description,
                 Price = dto.Price,
+                PriceUSD = dto.PriceUSD,
+                PriceKHR = dto.PriceKHR,
                 ImageUrl = dto.ImageUrl,
                 DietaryInfo = dto.DietaryInfo,
                 IsAvailable = true,
@@ -159,8 +194,13 @@ namespace DigitalMenuSystem.API.Services.Menu
                 CategoryId = item.CategoryId,
                 CategoryName = category.Name,
                 Name = item.Name,
+                NameKH = item.NameKH,
+                NameEN = item.NameEN,
+                NameCN = item.NameCN,
                 Description = item.Description,
                 Price = item.Price,
+                PriceUSD = item.PriceUSD,
+                PriceKHR = item.PriceKHR,
                 ImageUrl = item.ImageUrl,
                 DietaryInfo = item.DietaryInfo,
                 IsAvailable = item.IsAvailable,
@@ -183,8 +223,13 @@ namespace DigitalMenuSystem.API.Services.Menu
 
             // Update fields
             item.Name = dto.Name;
+            item.NameKH = dto.NameKH;
+            item.NameEN = dto.NameEN;
+            item.NameCN = dto.NameCN;
             item.Description = dto.Description;
             item.Price = dto.Price;
+            item.PriceUSD = dto.PriceUSD;
+            item.PriceKHR = dto.PriceKHR;
             item.ImageUrl = dto.ImageUrl;
             item.DietaryInfo = dto.DietaryInfo;
             item.IsAvailable = dto.IsAvailable;
@@ -201,8 +246,13 @@ namespace DigitalMenuSystem.API.Services.Menu
                 CategoryId = item.CategoryId,
                 CategoryName = item.Category.Name,
                 Name = item.Name,
+                NameKH = item.NameKH,
+                NameEN = item.NameEN,
+                NameCN = item.NameCN,
                 Description = item.Description,
                 Price = item.Price,
+                PriceUSD = item.PriceUSD,
+                PriceKHR = item.PriceKHR,
                 ImageUrl = item.ImageUrl,
                 DietaryInfo = item.DietaryInfo,
                 IsAvailable = item.IsAvailable,
@@ -254,7 +304,10 @@ namespace DigitalMenuSystem.API.Services.Menu
                 .Include(i => i.Category)
                 .Where(i => i.Category.RestaurantId == restaurantId &&
                            (i.Name.Contains(searchTerm) ||
-                            i.Description!.Contains(searchTerm)))
+                            (i.NameKH != null && i.NameKH.Contains(searchTerm)) ||
+                            (i.NameEN != null && i.NameEN.Contains(searchTerm)) ||
+                            (i.NameCN != null && i.NameCN.Contains(searchTerm)) ||
+                            (i.Description != null && i.Description.Contains(searchTerm))))
                 .OrderBy(i => i.DisplayOrder)
                 .Select(i => new MenuItemDto
                 {
@@ -262,8 +315,13 @@ namespace DigitalMenuSystem.API.Services.Menu
                     CategoryId = i.CategoryId,
                     CategoryName = i.Category.Name,
                     Name = i.Name,
+                    NameKH = i.NameKH,
+                    NameEN = i.NameEN,
+                    NameCN = i.NameCN,
                     Description = i.Description,
                     Price = i.Price,
+                    PriceUSD = i.PriceUSD,
+                    PriceKHR = i.PriceKHR,
                     ImageUrl = i.ImageUrl,
                     DietaryInfo = i.DietaryInfo,
                     IsAvailable = i.IsAvailable,
