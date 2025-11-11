@@ -155,13 +155,18 @@ namespace DigitalMenuSystem.API.Controllers
             try
             {
                 var success = await _itemService.DeleteItemAsync(id);
-                
+
                 if (!success)
                 {
                     return NotFound(new { message = $"Menu item with ID {id} not found" });
                 }
 
                 return Ok(new { message = "Menu item deleted successfully", itemId = id });
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, $"Cannot delete menu item {id} due to business rule violation");
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
