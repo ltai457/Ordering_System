@@ -30,7 +30,7 @@ const MenuPage = () => {
   const isScrollingProgrammatically = useRef(false)
 
   const resolvedTableCode = qrTableCode || tableInfo?.tableCode || null
-  const DEFAULT_RESTAURANT_ID = 1
+  const DEFAULT_RESTAURANT_ID = 2 // Chang An BBQ restaurant
   const shouldPromptForTable = !tableInfo && !resolvedTableCode
 
   const fetchMenu = useCallback(async () => {
@@ -199,33 +199,33 @@ const MenuPage = () => {
 
             {/* Cart Button - Mobile optimized */}
             <button
-              onClick={() => navigate('/cart')}
-              className="relative bg-orange-500 hover:bg-orange-600 text-white font-semibold px-3 py-2 lg:px-5 lg:py-2.5 rounded-lg transition-colors shadow-md"
-            >
-              <div className="flex items-center gap-1.5 lg:gap-2">
-                <svg
-                  className="w-4 h-4 lg:w-5 lg:h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <span className="text-sm lg:text-base">Cart</span>
-              </div>
-              {/* Cart Badge */}
-              {getTotalItems() > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-white bg-red-500 rounded-full">
-                  {getTotalItems()}
-                </span>
-              )}
-            </button>
-          </div>
+                onClick={() => navigate('/cart')}
+                className="relative bg-orange-500 hover:bg-orange-600 text-white font-semibold px-3 py-2 lg:px-5 lg:py-2.5 rounded-lg transition-colors shadow-md"
+              >
+                <div className="flex items-center gap-1.5 lg:gap-2">
+                  <svg
+                    className="w-4 h-4 lg:w-5 lg:h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <span className="text-sm lg:text-base">Cart</span>
+                </div>
+                {/* Cart Badge */}
+                {getTotalItems() > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-white bg-red-500 rounded-full">
+                    {getTotalItems()}
+                  </span>
+                )}
+              </button>
+            </div>
 
           {/* Banner - Add your banner content here */}
           <div className="mb-2 py-2 px-3 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg text-center">
