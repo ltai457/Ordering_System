@@ -1,4 +1,20 @@
+import { useEffect } from 'react'
+
 const CategoryNav = ({ categories, activeCategory, onCategoryClick }) => {
+  // Load Preahvihear font
+  useEffect(() => {
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.href = 'https://fonts.googleapis.com/css2?family=Preahvihear&display=swap'
+    document.head.appendChild(link)
+
+    return () => {
+      if (document.head.contains(link)) {
+        document.head.removeChild(link)
+      }
+    }
+  }, [])
+
   return (
     <div className="bg-white shadow-sm">
       <div className="max-w-7xl mx-auto">
@@ -7,8 +23,9 @@ const CategoryNav = ({ categories, activeCategory, onCategoryClick }) => {
             <button
               key={category.id}
               onClick={() => onCategoryClick(category.id)}
+              style={{ fontFamily: "'Preahvihear', sans-serif" }}
               className={`
-                relative px-4 py-2.5 rounded-lg font-semibold whitespace-nowrap transition-all text-sm
+                relative px-4 py-2.5 rounded-lg font-extrabold whitespace-nowrap transition-all text-sm
                 ${
                   activeCategory === category.id
                     ? 'bg-orange-500 text-white shadow-md'
