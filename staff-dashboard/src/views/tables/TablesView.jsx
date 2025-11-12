@@ -124,8 +124,7 @@ const TablesView = () => {
 
   const getQRCodeURL = (table) => {
     // Customer app URL with table code
-    // Use local IP for phone access on port 5173
-    const customerAppUrl = 'http://192.168.88.6:5173'
+    const customerAppUrl = import.meta.env.VITE_CUSTOMER_APP_URL || 'http://159.223.32.32'
     return `${customerAppUrl}/menu/${table.tableCode}`
   }
 
