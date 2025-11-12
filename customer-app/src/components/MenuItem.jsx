@@ -34,9 +34,9 @@ const MenuItem = ({ item, category, onAddToCart }) => {
   const [lastQuantityAdded, setLastQuantityAdded] = useState(0)
   const confirmationTimeout = useRef(null)
 
-  // Calculate quantity from cart (only count non-customized items for this item)
+  // Calculate total quantity from cart (including both customized and non-customized)
   const quantity = cartItems
-    .filter(cartItem => cartItem.id === item.id && !cartItem.customization)
+    .filter(cartItem => cartItem.id === item.id)
     .reduce((total, cartItem) => total + cartItem.quantity, 0)
 
   // Load Preahvihear font
@@ -96,45 +96,22 @@ const MenuItem = ({ item, category, onAddToCart }) => {
     }
   }, [])
 
-  const handleQuickAdd = () => {
-    // Add 1 item to cart
-    onAddToCart(item, 1, null)
-    setLastQuantityAdded(1)
-    setShowConfirmation(true)
-
-    if (confirmationTimeout.current) {
-      clearTimeout(confirmationTimeout.current)
-    }
-
-    confirmationTimeout.current = setTimeout(() => {
-      setShowConfirmation(false)
-    }, 1800)
-  }
-
   const handleCustomize = () => {
     setShowCustomizationModal(true)
   }
 
-  const increaseQuantity = () => {
-    // First click adds to cart immediately
-    onAddToCart(item, 1, null)
-    setLastQuantityAdded(1)
-    setShowConfirmation(true)
-
-    if (confirmationTimeout.current) {
-      clearTimeout(confirmationTimeout.current)
-    }
-
-    confirmationTimeout.current = setTimeout(() => {
-      setShowConfirmation(false)
-    }, 1800)
+  const handleAddClick = () => {
+    // Always open customization modal to let customer choose spicy level, quantity, etc.
+    setShowCustomizationModal(true)
   }
 
   const decreaseQuantity = () => {
-    // Find the non-customized cart item and decrease its quantity
-    const cartItem = cartItems.find(ci => ci.id === item.id && !ci.customization)
-    if (cartItem) {
-      decreaseCartQty(cartItem.cartItemId || `${cartItem.id}-default`)
+    // Find the most recently added item (last in cart) and decrease its quantity
+    const itemsInCart = cartItems.filter(ci => ci.id === item.id)
+    if (itemsInCart.length > 0) {
+      // Get the last added item
+      const lastItem = itemsInCart[itemsInCart.length - 1]
+      decreaseCartQty(lastItem.cartItemId || `${lastItem.id}-default`)
     }
   }
 
@@ -185,10 +162,7 @@ const MenuItem = ({ item, category, onAddToCart }) => {
         />
       )}
 
-      <div
-        className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full cursor-pointer hover:shadow-lg transition-shadow"
-        onClick={() => allowCustomization && handleCustomize()}
-      >
+      <div className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full">
         {/* Item Image */}
         <div className="h-40 w-full overflow-hidden bg-white relative">
           {item.imageUrl ? (
@@ -233,7 +207,7 @@ const MenuItem = ({ item, category, onAddToCart }) => {
               // Show only + button when quantity is 0
               <div className="absolute bottom-2 right-2" onClick={(e) => e.stopPropagation()}>
                 <button
-                  onClick={increaseQuantity}
+                  onClick={handleAddClick}
                   className="w-8 h-8 flex items-center justify-center text-white bg-emerald-600 hover:bg-emerald-700 rounded-full shadow-lg transition-all active:scale-95"
                 >
                   <span className="text-xl font-bold">+</span>
@@ -252,7 +226,7 @@ const MenuItem = ({ item, category, onAddToCart }) => {
                   {quantity}
                 </span>
                 <button
-                  onClick={handleQuickAdd}
+                  onClick={handleAddClick}
                   className="w-8 h-8 flex items-center justify-center text-white bg-emerald-600 hover:bg-emerald-700 rounded-full shadow-md transition-all active:scale-95"
                 >
                   <span className="text-xl font-bold">+</span>
