@@ -1,20 +1,4 @@
-import { useEffect } from 'react'
-
 const CategoryNav = ({ categories, activeCategory, onCategoryClick }) => {
-  // Load Preahvihear font
-  useEffect(() => {
-    const link = document.createElement('link')
-    link.rel = 'stylesheet'
-    link.href = 'https://fonts.googleapis.com/css2?family=Preahvihear&display=swap'
-    document.head.appendChild(link)
-
-    return () => {
-      if (document.head.contains(link)) {
-        document.head.removeChild(link)
-      }
-    }
-  }, [])
-
   return (
     <div className="bg-white shadow-sm">
       <div className="max-w-7xl mx-auto">

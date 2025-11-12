@@ -17,16 +17,6 @@ const styles = {
   }
 }
 
-// Categories that should NOT have customization options
-const NON_CUSTOMIZABLE_CATEGORIES = [
-  'drinks',
-  'beverage',
-  'beverages',
-  'desserts',
-  'dessert',
-  'ភេសជ្ជៈ drinks',
-]
-
 const MenuItem = ({ item, category, onAddToCart }) => {
   const { cartItems, decreaseQuantity: decreaseCartQty } = useCart()
   const [showConfirmation, setShowConfirmation] = useState(false)
@@ -38,20 +28,6 @@ const MenuItem = ({ item, category, onAddToCart }) => {
   const quantity = cartItems
     .filter(cartItem => cartItem.id === item.id)
     .reduce((total, cartItem) => total + cartItem.quantity, 0)
-
-  // Load Preahvihear font
-  useEffect(() => {
-    const link = document.createElement('link')
-    link.rel = 'stylesheet'
-    link.href = 'https://fonts.googleapis.com/css2?family=Preahvihear&display=swap'
-    document.head.appendChild(link)
-
-    return () => {
-      if (document.head.contains(link)) {
-        document.head.removeChild(link)
-      }
-    }
-  }, [])
 
   // Display all languages and prices together
   const displayNames = {
@@ -79,15 +55,6 @@ const MenuItem = ({ item, category, onAddToCart }) => {
         : Number.parseFloat(addOn.price ?? '0'),
   }))
 
-  const hasAddOns = itemAddOns.length > 0
-
-  // Allow customization if the category permits it or the item has add-ons
-  const allowCustomization = hasAddOns
-    ? true
-    : category
-      ? !NON_CUSTOMIZABLE_CATEGORIES.includes(category.name.toLowerCase())
-      : true // Default to true for search results
-
   useEffect(() => {
     return () => {
       if (confirmationTimeout.current) {
@@ -95,10 +62,6 @@ const MenuItem = ({ item, category, onAddToCart }) => {
       }
     }
   }, [])
-
-  const handleCustomize = () => {
-    setShowCustomizationModal(true)
-  }
 
   const handleAddClick = () => {
     // Always open customization modal to let customer choose spicy level, quantity, etc.
