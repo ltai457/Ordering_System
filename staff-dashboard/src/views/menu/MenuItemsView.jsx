@@ -234,7 +234,32 @@ const MenuItemsView = () => {
 
                     <div className="flex-1 space-y-3">
                       <div className="flex items-start justify-between gap-2">
-                        <h3 className="text-base sm:text-lg font-semibold text-white line-clamp-2">{item.name}</h3>
+                        <div className="flex-1 min-w-0">
+                          {/* Khmer Name */}
+                          {item.nameKH && (
+                            <h3 className="text-base sm:text-lg font-bold text-white line-clamp-1">
+                              {item.nameKH}
+                            </h3>
+                          )}
+                          {/* English Name */}
+                          {item.nameEN && (
+                            <div className="text-sm font-semibold text-slate-300 line-clamp-1">
+                              {item.nameEN}
+                            </div>
+                          )}
+                          {/* Chinese Name */}
+                          {item.nameCN && (
+                            <div className="text-sm font-semibold text-slate-300 line-clamp-1">
+                              {item.nameCN}
+                            </div>
+                          )}
+                          {/* Fallback to legacy name if no multilingual names */}
+                          {!item.nameKH && !item.nameEN && !item.nameCN && (
+                            <h3 className="text-base sm:text-lg font-semibold text-white line-clamp-2">
+                              {item.name}
+                            </h3>
+                          )}
+                        </div>
                         <span
                           className={clsx(
                             'inline-flex items-center rounded-full px-2 sm:px-3 py-1 text-xs font-semibold whitespace-nowrap flex-shrink-0',
@@ -248,9 +273,24 @@ const MenuItemsView = () => {
                       </div>
 
                       <div className="flex items-center justify-between">
-                        <span className="text-xl font-bold text-primary">
-                          ${item.price.toFixed(2)}
-                        </span>
+                        <div className="text-base sm:text-lg font-bold text-primary">
+                          {/* Show KHR and USD prices if available */}
+                          {item.priceKHR && (
+                            <span>
+                              <span className="text-xl">៛</span>{item.priceKHR.toLocaleString()}
+                            </span>
+                          )}
+                          {item.priceKHR && item.priceUSD && <span className="mx-1">/</span>}
+                          {item.priceUSD && (
+                            <span>
+                              <span className="text-lg">$</span>{item.priceUSD.toFixed(2)}
+                            </span>
+                          )}
+                          {/* Fallback to legacy price if no dual currency */}
+                          {!item.priceKHR && !item.priceUSD && (
+                            <span>${item.price.toFixed(2)}</span>
+                          )}
+                        </div>
                         <span className="text-xs text-slate-400 bg-white/5 px-2 py-1 rounded">
                           {item.categoryName}
                         </span>
