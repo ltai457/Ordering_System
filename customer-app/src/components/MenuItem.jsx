@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { useCart } from '../contexts/CartContext'
 import ItemCustomizationModal from './ItemCustomizationModal'
 
 // Define font styles to match reference design
@@ -27,11 +28,16 @@ const NON_CUSTOMIZABLE_CATEGORIES = [
 ]
 
 const MenuItem = ({ item, category, onAddToCart }) => {
-  const [quantity, setQuantity] = useState(1)
+  const { cartItems, decreaseQuantity: decreaseCartQty } = useCart()
   const [showConfirmation, setShowConfirmation] = useState(false)
   const [showCustomizationModal, setShowCustomizationModal] = useState(false)
   const [lastQuantityAdded, setLastQuantityAdded] = useState(0)
   const confirmationTimeout = useRef(null)
+
+  // Calculate total quantity from cart (including both customized and non-customized)
+  const quantity = cartItems
+    .filter(cartItem => cartItem.id === item.id)
+    .reduce((total, cartItem) => total + cartItem.quantity, 0)
 
   // Load Preahvihear font
   useEffect(() => {
@@ -90,32 +96,22 @@ const MenuItem = ({ item, category, onAddToCart }) => {
     }
   }, [])
 
-  const handleQuickAdd = () => {
-    // Quick add without customization
-    onAddToCart(item, quantity, null)
-    setLastQuantityAdded(quantity)
-    setShowConfirmation(true)
-
-    if (confirmationTimeout.current) {
-      clearTimeout(confirmationTimeout.current)
-    }
-
-    confirmationTimeout.current = setTimeout(() => {
-      setShowConfirmation(false)
-    }, 1800)
-  }
-
   const handleCustomize = () => {
     setShowCustomizationModal(true)
   }
 
-  const increaseQuantity = () => {
-    setQuantity(prev => prev + 1)
+  const handleAddClick = () => {
+    // Always open customization modal to let customer choose spicy level, quantity, etc.
+    setShowCustomizationModal(true)
   }
 
   const decreaseQuantity = () => {
-    if (quantity > 1) {
-      setQuantity(prev => prev - 1)
+    // Find the most recently added item (last in cart) and decrease its quantity
+    const itemsInCart = cartItems.filter(ci => ci.id === item.id)
+    if (itemsInCart.length > 0) {
+      // Get the last added item
+      const lastItem = itemsInCart[itemsInCart.length - 1]
+      decreaseCartQty(lastItem.cartItemId || `${lastItem.id}-default`)
     }
   }
 
@@ -123,6 +119,7 @@ const MenuItem = ({ item, category, onAddToCart }) => {
     onAddToCart(item, qty, customization)
     setLastQuantityAdded(qty)
     setShowConfirmation(true)
+    // Don't reset quantity - keep counter visible
 
     if (confirmationTimeout.current) {
       clearTimeout(confirmationTimeout.current)
@@ -133,20 +130,18 @@ const MenuItem = ({ item, category, onAddToCart }) => {
     }, 1800)
   }
 
-  // Format price display with larger currency symbols
+  // Format price display - one line with /
   const displayPrice = () => {
     const formatNumber = (num) => {
       return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
     }
-
     return (
       <>
-        <span style={{ fontSize: '1.2em' }}>៛</span> {formatNumber(displayPrices.khr || "0")}
+        <span style={{ fontSize: '1.3em', fontWeight: '900' }}>៛</span>{formatNumber(displayPrices.khr || "0")}
         {displayPrices.usd && (
           <>
             {' / '}
-            <span style={{ fontSize: '1.1em' }}>$</span>
-            {formatNumber(displayPrices.usd.toFixed(2))}
+            <span style={{ fontSize: '1.1em', fontWeight: 'bold' }}>$</span>{formatNumber(displayPrices.usd.toFixed(2))}
           </>
         )}
       </>
@@ -169,7 +164,7 @@ const MenuItem = ({ item, category, onAddToCart }) => {
 
       <div className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full">
         {/* Item Image */}
-        <div className="h-40 w-full overflow-hidden bg-white">
+        <div className="h-40 w-full overflow-hidden bg-white relative">
           {item.imageUrl ? (
             <img
               src={item.imageUrl}
@@ -205,11 +200,45 @@ const MenuItem = ({ item, category, onAddToCart }) => {
               </span>
             </div>
           )}
+
+          {/* Floating Quantity Controls - Overlaid on Image */}
+          {item.isAvailable && (
+            quantity === 0 ? (
+              // Show only + button when quantity is 0
+              <div className="absolute bottom-2 right-2" onClick={(e) => e.stopPropagation()}>
+                <button
+                  onClick={handleAddClick}
+                  className="w-8 h-8 flex items-center justify-center text-white bg-emerald-600 hover:bg-emerald-700 rounded-full shadow-lg transition-all active:scale-95"
+                >
+                  <span className="text-xl font-bold">+</span>
+                </button>
+              </div>
+            ) : (
+              // Show − [qty] + when quantity > 0
+              <div className="absolute bottom-2 right-2 flex items-center gap-1.5 bg-white/95 backdrop-blur-sm rounded-full px-1.5 py-1 shadow-lg" onClick={(e) => e.stopPropagation()}>
+                <button
+                  onClick={decreaseQuantity}
+                  className="w-7 h-7 flex items-center justify-center text-emerald-600 hover:text-emerald-700 font-bold text-xl bg-white rounded-full border-2 border-emerald-600 transition-all active:scale-95"
+                >
+                  −
+                </button>
+                <span className="font-bold text-gray-900 w-6 text-center text-sm">
+                  {quantity}
+                </span>
+                <button
+                  onClick={handleAddClick}
+                  className="w-8 h-8 flex items-center justify-center text-white bg-emerald-600 hover:bg-emerald-700 rounded-full shadow-md transition-all active:scale-95"
+                >
+                  <span className="text-xl font-bold">+</span>
+                </button>
+              </div>
+            )
+          )}
         </div>
 
         {/* Item Details */}
-        <div className="p-3 flex-grow flex flex-col justify-between">
-          <div className="mb-2">
+        <div className="p-3 flex-grow flex flex-col">
+          <div>
             {/* Khmer Name - Bold with Preahvihear font */}
             {displayNames.kh && (
               <h3 className="text-base font-extrabold text-gray-900" style={styles.preahvihearFont}>
@@ -230,83 +259,18 @@ const MenuItem = ({ item, category, onAddToCart }) => {
             )}
           </div>
 
-          {item.description && (
-            <div className="mb-2">
-              <p className="text-gray-600 text-xs line-clamp-2" style={styles.preahvihearFont}>
-                {item.description}
-              </p>
+          {/* Price - one line */}
+          <div className="mt-1">
+            <span className="text-red-600 font-bold text-sm lg:text-base">
+              {displayPrice()}
+            </span>
+          </div>
+
+          {showConfirmation && item.isAvailable && (
+            <div className="mt-2 rounded-lg bg-emerald-50 px-2 py-1.5 text-xs font-semibold text-emerald-700 shadow-sm">
+              Added {lastQuantityAdded} × {displayNames.en || displayNames.kh || displayNames.cn} to cart
             </div>
           )}
-
-          {/* Price and Actions */}
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-red-600 font-bold text-sm">
-                {displayPrice()}
-              </span>
-
-              {/* Quantity Selector */}
-              {item.isAvailable && (
-                <div className="flex items-center gap-1 lg:gap-2 bg-gray-100 rounded-lg px-1.5 lg:px-2 py-0.5 lg:py-1">
-                  <button
-                    onClick={decreaseQuantity}
-                    className="w-6 h-6 lg:w-8 lg:h-8 flex items-center justify-center text-gray-600 hover:text-gray-900 font-bold text-base lg:text-xl"
-                  >
-                    -
-                  </button>
-                  <span className="font-bold text-gray-900 w-6 lg:w-8 text-center text-sm lg:text-base">
-                    {quantity}
-                  </span>
-                  <button
-                    onClick={increaseQuantity}
-                    className="w-6 h-6 lg:w-8 lg:h-8 flex items-center justify-center text-gray-600 hover:text-gray-900 font-bold text-base lg:text-xl"
-                  >
-                    +
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Action Buttons */}
-            {item.isAvailable ? (
-              allowCustomization ? (
-                <div className="flex gap-2">
-                  <button
-                    onClick={handleCustomize}
-                    className="flex-1 py-2 px-2 rounded-lg text-xs font-semibold bg-white border-2 border-orange-500 text-orange-500 hover:bg-orange-50 transition-all"
-                  >
-                    Customize
-                  </button>
-                  <button
-                    onClick={handleQuickAdd}
-                    className="flex-1 py-2 px-2 rounded-lg text-xs font-semibold bg-orange-500 hover:bg-orange-600 text-white shadow-md hover:shadow-lg transition-all"
-                  >
-                    Quick Add
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={handleQuickAdd}
-                  className="w-full py-2 px-2 rounded-lg text-xs font-semibold bg-orange-500 hover:bg-orange-600 text-white shadow-md hover:shadow-lg transition-all"
-                >
-                  Add to Cart
-                </button>
-              )
-            ) : (
-              <button
-                disabled
-                className="w-full py-2.5 rounded-lg font-semibold bg-gray-300 text-gray-500 cursor-not-allowed"
-              >
-                Unavailable
-              </button>
-            )}
-
-            {showConfirmation && item.isAvailable && (
-              <div className="mt-2 rounded-lg bg-emerald-50 px-2 py-1.5 text-xs font-semibold text-emerald-700 shadow-sm">
-                Added {lastQuantityAdded} × {displayNames.en || displayNames.kh || displayNames.cn} to cart
-              </div>
-            )}
-          </div>
         </div>
       </div>
     </>

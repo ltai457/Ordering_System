@@ -389,7 +389,10 @@ const MenuPage = () => {
             {searchTerm ? (
               // Search Results
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                <h2
+                  className="text-2xl font-extrabold text-gray-900 mb-6"
+                  style={{ fontFamily: "'Preahvihear', sans-serif" }}
+                >
                   Search Results for "{searchTerm}"
                 </h2>
                 {filteredItems.length > 0 ? (
@@ -420,7 +423,10 @@ const MenuPage = () => {
                     >
                       {/* Category Title */}
                       <div className="mb-4 lg:mb-6">
-                        <h2 className="text-xl lg:text-3xl font-bold text-gray-900 pb-2 lg:pb-3 border-b-2 border-orange-500">
+                        <h2
+                          className="text-xl lg:text-3xl font-extrabold text-gray-900 pb-2 lg:pb-3 border-b-2 border-orange-500"
+                          style={{ fontFamily: "'Preahvihear', sans-serif" }}
+                        >
                           {category.name}
                         </h2>
                         {category.description && (
