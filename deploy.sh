@@ -23,7 +23,7 @@ cd /home/deployer/Ordering_System
 
 # Pull latest code
 echo "📥 Pulling latest code from GitHub..."
-git pull origin DigitalOcean
+git pull origin main
 
 # Deploy Backend
 if [ "$COMPONENT" = "all" ] || [ "$COMPONENT" = "backend" ]; then
