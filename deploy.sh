@@ -40,6 +40,10 @@ if [ "$COMPONENT" = "all" ] || [ "$COMPONENT" = "backend" ]; then
     dotnet build --configuration Release
     dotnet publish -c Release -o ./publish
 
+    # Run database migrations
+    echo "Running database migrations..."
+    dotnet ef database update --no-build || echo "⚠️  Migration failed or already applied"
+
     # Kill old API process
     echo "Stopping old API process..."
     pkill -f "DigitalMenuSystem.API.dll" || true
