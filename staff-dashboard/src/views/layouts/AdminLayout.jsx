@@ -1,11 +1,12 @@
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import useAdminLayoutViewModel from '../../viewmodels/layouts/useAdminLayoutViewModel.js'
 
 const AdminLayout = () => {
   const { user, isChecking, handleLogout } = useAdminLayoutViewModel()
   const location = useLocation()
   const navigate = useNavigate()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const roleName = user?.roleName?.toLowerCase() ?? ''
   const isKitchenUser = roleName === 'chef'
   const isSuperAdmin = roleName === 'superadmin'
@@ -51,6 +52,11 @@ const AdminLayout = () => {
     }
   }, [allowedPaths, isChecking, isKitchenUser, location.pathname, navigate])
 
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false)
+  }, [location.pathname])
+
   if (isChecking) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-surface text-slate-200">
@@ -70,19 +76,44 @@ const AdminLayout = () => {
 
   return (
     <div className="flex min-h-screen bg-surface text-slate-100">
-      <aside className="hidden w-64 flex-col border-r border-white/10 bg-sidebar/95 px-6 py-8 lg:flex fixed left-0 top-0 bottom-0 overflow-y-auto">
-        <div className="flex items-center gap-3">
-          <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/20 text-primary">
-            <DashboardIcon className="h-6 w-6" />
-          </span>
-          <div>
-            <p className="text-sm uppercase tracking-wide text-slate-400">
-              Digital Menu
-            </p>
-            <p className="text-lg font-semibold text-white">
-              Staff Dashboard
-            </p>
+      {/* Mobile backdrop overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Sidebar - Desktop: fixed, Mobile: overlay drawer */}
+      <aside className={`
+        fixed left-0 top-0 bottom-0 z-50 w-64 flex flex-col border-r border-white/10 bg-sidebar/95 px-6 py-8 overflow-y-auto
+        transition-transform duration-300 ease-in-out
+        lg:translate-x-0 lg:z-auto
+        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/20 text-primary">
+              <DashboardIcon className="h-6 w-6" />
+            </span>
+            <div>
+              <p className="text-sm uppercase tracking-wide text-slate-400">
+                Digital Menu
+              </p>
+              <p className="text-lg font-semibold text-white">
+                Staff Dashboard
+              </p>
+            </div>
           </div>
+          <button
+            className="lg:hidden flex items-center justify-center h-8 w-8 rounded-lg text-slate-400 hover:bg-white/10 hover:text-white transition"
+            onClick={() => setIsMobileMenuOpen(false)}
+            type="button"
+            aria-label="Close menu"
+          >
+            <CloseIcon className="h-5 w-5" />
+          </button>
         </div>
 
         <nav className="mt-10 space-y-1">
@@ -124,16 +155,26 @@ const AdminLayout = () => {
       </aside>
 
       <div className="flex flex-1 flex-col lg:ml-64">
-        <header className="flex items-center justify-between border-b border-white/10 bg-sidebar/80 px-6 py-4 backdrop-blur fixed top-0 right-0 left-0 lg:left-64 z-30">
-          <div>
-            <h1 className="text-lg font-semibold text-white">
-              {user?.restaurantName ?? 'My Restaurant'}
-            </h1>
-            <p className="text-xs text-slate-400">
-              {isKitchenUser
-                ? 'Kitchen mode — stay on top of incoming tickets.'
-                : 'Manage menu, orders, and floor in real time.'}
-            </p>
+        <header className="flex items-center justify-between border-b border-white/10 bg-sidebar/80 px-4 sm:px-6 py-4 backdrop-blur fixed top-0 right-0 left-0 lg:left-64 z-30">
+          <div className="flex items-center gap-3">
+            <button
+              className="lg:hidden flex items-center justify-center h-10 w-10 rounded-lg text-slate-300 hover:bg-white/10 hover:text-white transition"
+              onClick={() => setIsMobileMenuOpen(true)}
+              type="button"
+              aria-label="Open menu"
+            >
+              <MenuHamburgerIcon className="h-6 w-6" />
+            </button>
+            <div>
+              <h1 className="text-base sm:text-lg font-semibold text-white">
+                {user?.restaurantName ?? 'My Restaurant'}
+              </h1>
+              <p className="text-xs text-slate-400 hidden sm:block">
+                {isKitchenUser
+                  ? 'Kitchen mode — stay on top of incoming tickets.'
+                  : 'Manage menu, orders, and floor in real time.'}
+              </p>
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
@@ -153,7 +194,7 @@ const AdminLayout = () => {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto bg-surface px-6 py-8 mt-[73px]">
+        <main className="flex-1 overflow-y-auto bg-surface px-4 sm:px-6 py-6 sm:py-8 mt-[73px]">
           <Outlet />
         </main>
       </div>
@@ -324,6 +365,40 @@ const CashierIcon = (props) => (
   >
     <path
       d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+)
+
+const MenuHamburgerIcon = (props) => (
+  <svg
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path
+      d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+)
+
+const CloseIcon = (props) => (
+  <svg
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path
+      d="M6 18L18 6M6 6l12 12"
       strokeLinecap="round"
       strokeLinejoin="round"
     />

@@ -280,8 +280,8 @@ const MenuCategoriesView = () => {
       </section>
 
       {isFormOpen ? (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur">
-          <div className="w-full max-w-xl rounded-2xl border border-white/10 bg-sidebar/90 p-6 shadow-2xl">
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur p-4 overflow-y-auto">
+          <div className="w-full max-w-xl rounded-2xl border border-white/10 bg-sidebar/90 p-4 sm:p-6 shadow-2xl my-auto">
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="text-lg font-semibold text-white">

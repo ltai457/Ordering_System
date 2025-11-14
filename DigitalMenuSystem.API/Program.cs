@@ -25,8 +25,13 @@ if (string.IsNullOrEmpty(apiPort) || !int.TryParse(apiPort, out var parsedPort))
 
 builder.WebHost.UseUrls($"http://0.0.0.0:{parsedPort}", $"http://localhost:{parsedPort}");
 
-// Load environment variables from .env file
-Env.Load();
+// Load environment variables from .env file based on environment
+var environment = builder.Environment.EnvironmentName;
+var envFile = environment == "Development" ? ".env.Development" : ".env";
+Env.Load(envFile);
+
+Console.WriteLine($"[INFO] Environment: {environment}");
+Console.WriteLine($"[INFO] Loading environment file: {envFile}");
 
 // Add services to the container
 builder.Services.AddControllers()
