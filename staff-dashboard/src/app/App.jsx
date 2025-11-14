@@ -14,7 +14,7 @@ import UserManagementView from '../views/users/UserManagementView.jsx'
 import TablesView from '../views/tables/TablesView.jsx'
 
 const App = () => (
-  <BrowserRouter>
+  <BrowserRouter basename="/staff">
     <Routes>
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<LoginView />} />
