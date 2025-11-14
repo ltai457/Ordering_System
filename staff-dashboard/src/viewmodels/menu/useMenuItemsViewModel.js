@@ -123,6 +123,7 @@ const useMenuItemsViewModel = () => {
         imageUrl: imageUrl || null,
         dietaryInfo: form.dietaryInfo || null,
         displayOrder: form.displayOrder,
+        preparationArea: form.preparationArea || 'Kitchen',
       }
 
       if (currentItem) {
