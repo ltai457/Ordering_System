@@ -5,18 +5,18 @@ const DashboardView = () => {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-2xl border border-white/5 bg-white/5 p-6 backdrop-blur">
-        <h2 className="text-lg font-semibold text-white">
+      <section className="rounded-2xl border border-white/5 bg-white/5 p-4 sm:p-6 backdrop-blur">
+        <h2 className="text-base sm:text-lg font-semibold text-white">
           {greeting}, {user?.fullName ?? user?.username ?? 'team'}!
         </h2>
-        <p className="mt-2 text-sm text-slate-400">
+        <p className="mt-2 text-xs sm:text-sm text-slate-400">
           This is your mission control for menu updates, live orders, and table
           availability. We&apos;ll expand this overview with analytics and
           alerts as we build out the admin experience.
         </p>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
           { label: 'Active Orders', value: '—' },
           { label: 'Items Available', value: '—' },

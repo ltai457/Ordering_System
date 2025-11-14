@@ -156,16 +156,16 @@ const TablesView = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-white">Tables</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-white">Tables</h2>
           <p className="text-sm text-slate-400">
             Manage restaurant tables and seating
           </p>
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary/90"
+          className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary/90 w-full sm:w-auto"
         >
           + Add Table
         </button>
@@ -240,8 +240,8 @@ const TablesView = () => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
-          <div className="w-full max-w-md rounded-xl border border-white/10 bg-sidebar p-6 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-4 overflow-y-auto">
+          <div className="w-full max-w-md rounded-xl border border-white/10 bg-sidebar p-4 sm:p-6 shadow-2xl my-auto">
             <h3 className="text-xl font-bold text-white">
               {editingTable ? 'Edit Table' : 'Add New Table'}
             </h3>
@@ -335,8 +335,8 @@ const TablesView = () => {
 
       {/* QR Code Modal */}
       {showQRModal && selectedTable && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
-          <div className="w-full max-w-md rounded-xl border border-white/10 bg-sidebar p-6 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-4 overflow-y-auto">
+          <div className="w-full max-w-md rounded-xl border border-white/10 bg-sidebar p-4 sm:p-6 shadow-2xl my-auto">
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-bold text-white">
                 QR Code - {selectedTable.tableNumber}
@@ -363,11 +363,11 @@ const TablesView = () => {
 
             <div className="mt-6 flex flex-col items-center">
               {/* QR Code */}
-              <div className="rounded-xl bg-white p-6 relative">
+              <div className="rounded-xl bg-white p-4 sm:p-6 relative max-w-full">
                 <QRCodeCanvas
                   id="qr-code-canvas"
                   value={getQRCodeURL(selectedTable)}
-                  size={256}
+                  size={window.innerWidth < 640 ? 200 : 256}
                   level="H"
                   includeMargin={true}
                   imageSettings={{
