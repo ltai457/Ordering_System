@@ -670,6 +670,28 @@ const MenuItemsView = () => {
               </div>
 
               <div>
+                <label className="block text-sm font-medium text-slate-300" htmlFor="item-preparation-area">
+                  Preparation Area *
+                </label>
+                <select
+                  className="mt-1 w-full rounded-lg border border-white/10 bg-surface px-3 py-2 text-sm text-white focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  id="item-preparation-area"
+                  name="preparationArea"
+                  onChange={handleFormChange('preparationArea')}
+                  value={form.preparationArea || 'Kitchen'}
+                >
+                  <option value="Kitchen">Kitchen</option>
+                  <option value="FrontOfHouse">Front of House</option>
+                </select>
+                <p className="mt-1 text-xs text-slate-400">
+                  Kitchen items are prepared in the kitchen. Front of House items (drinks, ready items) are handled by front staff.
+                </p>
+                {formErrors.preparationArea ? (
+                  <p className="mt-1 text-xs text-red-300">{formErrors.preparationArea}</p>
+                ) : null}
+              </div>
+
+              <div>
                 <label
                   className="block text-sm font-medium text-slate-300"
                   htmlFor="item-image"

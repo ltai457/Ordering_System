@@ -42,6 +42,7 @@ namespace DigitalMenuSystem.API.Services.Menu
                     DietaryInfo = i.DietaryInfo,
                     IsAvailable = i.IsAvailable,
                     DisplayOrder = i.DisplayOrder,
+                    PreparationArea = i.PreparationArea,
                     CreatedAt = i.CreatedAt,
                     UpdatedAt = i.UpdatedAt,
                     AddOns = i.AddOns.Where(a => a.IsAvailable).OrderBy(a => a.DisplayOrder).Select(a => new MenuItemAddOnDto
@@ -89,6 +90,7 @@ namespace DigitalMenuSystem.API.Services.Menu
                     DietaryInfo = i.DietaryInfo,
                     IsAvailable = i.IsAvailable,
                     DisplayOrder = i.DisplayOrder,
+                    PreparationArea = i.PreparationArea,
                     CreatedAt = i.CreatedAt,
                     UpdatedAt = i.UpdatedAt,
                     AddOns = i.AddOns.Where(a => a.IsAvailable).OrderBy(a => a.DisplayOrder).Select(a => new MenuItemAddOnDto
@@ -134,6 +136,7 @@ namespace DigitalMenuSystem.API.Services.Menu
                     DietaryInfo = i.DietaryInfo,
                     IsAvailable = i.IsAvailable,
                     DisplayOrder = i.DisplayOrder,
+                    PreparationArea = i.PreparationArea,
                     CreatedAt = i.CreatedAt,
                     UpdatedAt = i.UpdatedAt,
                     AddOns = i.AddOns.Where(a => a.IsAvailable).OrderBy(a => a.DisplayOrder).Select(a => new MenuItemAddOnDto
@@ -180,6 +183,7 @@ namespace DigitalMenuSystem.API.Services.Menu
                 DietaryInfo = dto.DietaryInfo,
                 IsAvailable = true,
                 DisplayOrder = dto.DisplayOrder,
+                PreparationArea = dto.PreparationArea,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -205,6 +209,7 @@ namespace DigitalMenuSystem.API.Services.Menu
                 DietaryInfo = item.DietaryInfo,
                 IsAvailable = item.IsAvailable,
                 DisplayOrder = item.DisplayOrder,
+                PreparationArea = item.PreparationArea,
                 CreatedAt = item.CreatedAt,
                 UpdatedAt = item.UpdatedAt
             };
@@ -234,6 +239,7 @@ namespace DigitalMenuSystem.API.Services.Menu
             item.DietaryInfo = dto.DietaryInfo;
             item.IsAvailable = dto.IsAvailable;
             item.DisplayOrder = dto.DisplayOrder;
+            item.PreparationArea = dto.PreparationArea;
             item.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
@@ -257,6 +263,7 @@ namespace DigitalMenuSystem.API.Services.Menu
                 DietaryInfo = item.DietaryInfo,
                 IsAvailable = item.IsAvailable,
                 DisplayOrder = item.DisplayOrder,
+                PreparationArea = item.PreparationArea,
                 CreatedAt = item.CreatedAt,
                 UpdatedAt = item.UpdatedAt
             };

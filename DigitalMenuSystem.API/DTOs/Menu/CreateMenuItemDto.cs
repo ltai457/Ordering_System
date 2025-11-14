@@ -45,5 +45,8 @@ namespace DigitalMenuSystem.API.DTOs.Menu
 
         [Range(0, 1000, ErrorMessage = "Display order must be between 0 and 1000")]
         public int DisplayOrder { get; set; } = 0;
+
+        [StringLength(50, ErrorMessage = "Preparation area cannot exceed 50 characters")]
+        public string PreparationArea { get; set; } = "Kitchen"; // Kitchen or FrontOfHouse
     }
 }

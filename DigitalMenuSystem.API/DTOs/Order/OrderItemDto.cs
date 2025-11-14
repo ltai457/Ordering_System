@@ -13,5 +13,6 @@ namespace DigitalMenuSystem.API.DTOs.Order
         public decimal Subtotal => Quantity * UnitPrice;
         public string? SpecialInstructions { get; set; }
         public int BatchNumber { get; set; }
+        public string PreparationArea { get; set; } = "Kitchen"; // Kitchen or FrontOfHouse
     }
 }

@@ -57,6 +57,10 @@ const TillView = () => {
     const latestBatchItems = order.orderItems.filter(item => item.batchNumber === order.currentBatch)
     const isAdditionalOrder = order.currentBatch > 1
 
+    // Split items by preparation area (default to Kitchen if not set)
+    const kitchenItems = latestBatchItems.filter(item => !item.preparationArea || item.preparationArea === 'Kitchen')
+    const frontOfHouseItems = latestBatchItems.filter(item => item.preparationArea === 'FrontOfHouse')
+
     const receiptHTML = `
       <!DOCTYPE html>
       <html>
@@ -140,13 +144,25 @@ const TillView = () => {
         </div>
 
         <div class="items">
-          <div style="font-weight: bold; margin-bottom: 10px;">${isAdditionalOrder ? 'NEW ITEMS TO PREPARE:' : 'ORDER ITEMS:'}</div>
-          ${latestBatchItems.map(item => `
-            <div class="item">
-              <div class="item-header">${item.quantity}x ${item.menuItemName}</div>
-              ${item.specialInstructions ? `<div class="item-note">* ${item.specialInstructions}</div>` : ''}
-            </div>
-          `).join('')}
+          ${kitchenItems.length > 0 ? `
+            <div style="font-weight: bold; margin-bottom: 10px; font-size: 16px; border-bottom: 2px solid #000; padding-bottom: 5px;">🍳 KITCHEN ITEMS:</div>
+            ${kitchenItems.map(item => `
+              <div class="item">
+                <div class="item-header">${item.quantity}x ${item.menuItemName}</div>
+                ${item.specialInstructions ? `<div class="item-note">* ${item.specialInstructions}</div>` : ''}
+              </div>
+            `).join('')}
+          ` : ''}
+
+          ${frontOfHouseItems.length > 0 ? `
+            <div style="font-weight: bold; margin-top: 15px; margin-bottom: 10px; font-size: 16px; border-bottom: 2px solid #000; padding-bottom: 5px;">🥤 FRONT OF HOUSE ITEMS:</div>
+            ${frontOfHouseItems.map(item => `
+              <div class="item">
+                <div class="item-header">${item.quantity}x ${item.menuItemName}</div>
+                ${item.specialInstructions ? `<div class="item-note">* ${item.specialInstructions}</div>` : ''}
+              </div>
+            `).join('')}
+          ` : ''}
         </div>
 
         ${order.notes ? `
@@ -260,11 +276,19 @@ const TillView = () => {
               <div className="space-y-2 mb-4 rounded-lg border border-white/20 bg-white/5 p-4">
                 {order.orderItems?.map((item) => {
                   const isNewItem = item.batchNumber === order.currentBatch && order.currentBatch > 1
+                  const isKitchen = !item.preparationArea || item.preparationArea === 'Kitchen'
                   return (
                     <div key={item.id} className={clsx("space-y-1 p-2 rounded", isNewItem && "bg-yellow-400/20 border-2 border-yellow-400")}>
                       <div className="flex justify-between items-start">
-                        <span className="font-semibold text-white">
+                        <span className="font-semibold text-white flex items-center gap-2">
                           <span className="inline-block w-8 text-orange-400">{item.quantity}x</span>
+                          <span className={clsx(
+                            "inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold",
+                            isKitchen ? "bg-red-500/20 text-red-300" : "bg-blue-500/20 text-blue-300"
+                          )}>
+                            {isKitchen ? '🍳' : '🥤'}
+                            {isKitchen ? 'KITCHEN' : 'FOH'}
+                          </span>
                           {item.menuItemName}
                           {isNewItem && <span className="ml-2 text-xs font-bold text-yellow-300">NEW!</span>}
                         </span>

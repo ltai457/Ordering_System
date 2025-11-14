@@ -30,6 +30,7 @@ namespace DigitalMenuSystem.API.DTOs.Menu
         public string? DietaryInfo { get; set; }
         public bool IsAvailable { get; set; }
         public int DisplayOrder { get; set; }
+        public string PreparationArea { get; set; } = "Kitchen"; // Kitchen or FrontOfHouse
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public List<MenuItemAddOnDto> AddOns { get; set; } = new List<MenuItemAddOnDto>();

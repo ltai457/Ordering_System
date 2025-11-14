@@ -12,6 +12,7 @@ export const menuItemFormInitialState = {
   imageFile: null,
   dietaryInfo: '',
   displayOrder: 0,
+  preparationArea: 'Kitchen',
 }
 
 export const mapMenuItemToForm = (item) => ({
@@ -28,6 +29,7 @@ export const mapMenuItemToForm = (item) => ({
   imageFile: null,
   dietaryInfo: item?.dietaryInfo ?? '',
   displayOrder: item?.displayOrder ?? 0,
+  preparationArea: item?.preparationArea ?? 'Kitchen',
 })
 
 export const validateMenuItemForm = (form) => {

@@ -286,7 +286,8 @@ namespace DigitalMenuSystem.API.Services.Order
                     Quantity = oi.Quantity,
                     UnitPrice = oi.UnitPrice,
                     SpecialInstructions = oi.SpecialInstructions,
-                    BatchNumber = oi.BatchNumber
+                    BatchNumber = oi.BatchNumber,
+                    PreparationArea = oi.MenuItem.PreparationArea
                 }).ToList()
             };
         }

@@ -41,7 +41,10 @@ namespace DigitalMenuSystem.API.Models
         public bool IsAvailable { get; set; } = true; // Can be marked unavailable (out of stock)
         
         public int DisplayOrder { get; set; } // For sorting items within category
-        
+
+        [StringLength(50)]
+        public string PreparationArea { get; set; } = "Kitchen"; // Kitchen or FrontOfHouse
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
         
